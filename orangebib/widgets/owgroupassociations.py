@@ -46,6 +46,8 @@ from Orange.widgets import gui
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
 from Orange.widgets.settings import Setting
 
+from orangebib import statsafe
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -272,6 +274,8 @@ class OWGroupAssociations(OWWidget):
     class Warning(OWWidget.Warning):
         few_items = Msg("Only {} entities passed filters")
         scipy_missing = Msg("scipy required for chi-square")
+        sparse_table = Msg("{}")
+        low_inertia = Msg("{}")
 
     class Information(OWWidget.Information):
         computing = Msg("Computing…")
@@ -628,6 +632,7 @@ class OWGroupAssociations(OWWidget):
         self._entity_label = cfg["entity_label"]
         self._entity_col_name = self._find_column(self._df, cfg["entity_col_alts"])
         self._display_all(); self._update_visualization(); self._send_outputs()
+        self._raise_statistical_warnings()
         parts = []
         n_ent = len(cont) if cont is not None and not cont.empty else 0
         if n_ent: parts.append(f"{n_ent} entities")
@@ -638,7 +643,29 @@ class OWGroupAssociations(OWWidget):
         if lr_df is not None: parts.append("log-ratio")
         self.status_label.setText(f"✅ {' · '.join(parts)}")
 
+    def _raise_statistical_warnings(self):
+        """Surface assumption violations on the main thread after a compute.
+
+        Chi-square inference is unreliable on sparse contingency tables, and a
+        two-dimensional biplot can hide most of the structure of the table.
+        Both conditions are silent failure modes for users without a
+        statistical background, so they are reported in the widget itself
+        rather than only in the numerical tables.
+        """
+        self.Warning.sparse_table.clear()
+        self.Warning.low_inertia.clear()
+        diag = getattr(self, "_chi_diagnostics", None)
+        if diag and diag.get("sparse"):
+            self.Warning.sparse_table(diag["message"])
+        inertia = getattr(self, "_ca_inertia", None)
+        if inertia:
+            msg = statsafe.inertia_warning(inertia)
+            if msg:
+                self.Warning.low_inertia(msg)
+
     def _compute_associations(self):
+        self._chi_diagnostics = None
+        self._ca_inertia = None
         df, gm, groups = self._df, self._gm_df, self._group_names
         cfg = list(ENTITY_CONFIGS.values())[self.entity_type_idx]
         entity_col = self._find_column(df, cfg["entity_col_alts"])
@@ -799,7 +826,10 @@ class OWGroupAssociations(OWWidget):
         if k < 1: return None
         try: U, s, Vt = np.linalg.svd(S, full_matrices=False)
         except np.linalg.LinAlgError: return None
-        k = min(k, len(s)); ine = s[:k] ** 2; ti = ine.sum()
+        k = min(k, len(s)); ine = s[:k] ** 2
+        # Total inertia must be summed over ALL dimensions, not only the k
+        # retained ones, otherwise the reported percentages are inflated.
+        ti = float((s ** 2).sum())
         rc = (U[:, :k] * s[:k]) / np.sqrt(r)
         cc = (Vt[:k, :].T * s[:k]) / np.sqrt(c.T)
         rows = []
@@ -812,11 +842,18 @@ class OWGroupAssociations(OWWidget):
             for d in range(min(k, 3)): row[f"Dim {d+1}"] = round(float(cc[j, d]), 6)
             rows.append(row)
         df = pd.DataFrame(rows)
+        # Principal inertias, with cumulative share, so users can judge how
+        # much of the table the plotted plane actually represents.
+        summary = statsafe.inertia_summary(s, max_dims=min(k, 3))
+        self._ca_inertia = statsafe.inertia_summary(s, max_dims=len(s))
         for d in range(min(k, 3)):
             pct = ine[d] / ti * 100 if ti > 0 else 0
-            df = pd.concat([df, pd.DataFrame([{
-                elabel: f"[Inertia Dim {d+1}]", "Type": "Info",
-                f"Dim {d+1}": round(pct, 2)}])], ignore_index=True)
+            info = {elabel: f"[Inertia Dim {d+1}]", "Type": "Info",
+                    f"Dim {d+1}": round(pct, 2)}
+            if d < len(summary):
+                info["Eigenvalue"] = round(summary[d]["eigenvalue"], 6)
+                info["Cumulative %"] = round(summary[d]["cumulative_pct"], 2)
+            df = pd.concat([df, pd.DataFrame([info])], ignore_index=True)
         return df
 
     # ── chi-square ──
@@ -854,22 +891,41 @@ class OWGroupAssociations(OWWidget):
                     sims = rng.multinomial(ti, pvec, size=N)
                     sim_stat = ((sims - exp_i) ** 2 / np.where(exp_i > 0, exp_i, 1)).sum(1)
                     perm_p[i] = (np.sum(sim_stat >= obs) + 1) / (N + 1)
+        # Multiple-comparison control: one permutation test is run per entity,
+        # so the raw p-values are reported alongside Benjamini-Hochberg
+        # (false discovery rate) and Bonferroni (family-wise) corrections.
+        p_bh = statsafe.adjust_pvalues(perm_p, method="fdr_bh")
+        p_bonf = statsafe.adjust_pvalues(perm_p, method="bonferroni")
+        # Haberman adjusted residuals are asymptotically N(0, 1); the Pearson
+        # standardized residuals kept below drive the balloon-plot encoding.
+        adj = statsafe.adjusted_residuals(mat, exp)
+        diag = statsafe.contingency_diagnostics(mat, exp, chi2=chi2)
+        self._chi_diagnostics = diag
+
         rows = []
         for i, it in enumerate(items):
             row = {elabel: it, "Chi-square contribution": round(float(rchi[i]), 4),
-                   "Perm. p-value": round(float(perm_p[i]), 4)}
+                   "Perm. p-value": round(float(perm_p[i]), 4),
+                   "Perm. p (BH)": round(float(p_bh[i]), 4),
+                   "Perm. p (Bonferroni)": round(float(p_bonf[i]), 4)}
             for j, g in enumerate(groups):
                 row[f"{g} Observed"] = int(mat[i, j])
                 row[f"{g} Expected"] = round(float(exp[i, j]), 2)
                 row[f"{g} Residual"] = round(float(mat[i, j] - exp[i, j]), 2)
                 row[f"{g} Std. residual"] = round(
                     float((mat[i, j] - exp[i, j]) / max(np.sqrt(exp[i, j]), 1e-12)), 3)
+                row[f"{g} Adj. residual"] = round(float(adj[i, j]), 3)
             rows.append(row)
         df = pd.DataFrame(rows).sort_values(
             "Chi-square contribution", ascending=False).reset_index(drop=True)
         df = pd.concat([df, pd.DataFrame([{
-            elabel: f"[Overall: χ²={chi2:.2f}, p={pv:.2e}, df={dof}]",
+            elabel: f"[Overall: χ²={chi2:.2f}, p={pv:.2e}, df={dof}, "
+                    f"Cramér's V={diag['cramers_v']:.3f}]",
             "Chi-square contribution": round(chi2, 4)}])], ignore_index=True)
+        df = pd.concat([df, pd.DataFrame([{
+            elabel: f"[Expected frequencies: min={diag['min_expected']:.2f}, "
+                    f"{diag['n_low']}/{diag['n_cells']} cells < "
+                    f"{statsafe.MIN_EXPECTED:.0f}]"}])], ignore_index=True)
         return df
 
     # ── SVD ──
@@ -1645,6 +1701,8 @@ class OWGroupAssociations(OWWidget):
     def _clear_results(self):
         self._contingency_df = self._diversity_df = self._ca_df = None
         self._chi_df = self._svd_df = self._logratio_df = self._filtered_df = None
+        self._chi_diagnostics = None
+        self._ca_inertia = None
         self._selected_entities.clear(); self._selected_cells.clear()
         self._hover_idx = -1; self._hover_cell = (-1, -1); self._viz_meta = None
         self.sel_label.setText("")

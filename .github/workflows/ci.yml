@@ -7,11 +7,19 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.12"]
+        exclude:
+          # Keep the matrix to one job per OS on the older interpreter.
+          - os: windows-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.10"
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
@@ -22,7 +30,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install Qt system libraries
+      - name: Install Qt system libraries (Linux only)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 \
@@ -37,3 +46,18 @@ jobs:
 
       - name: Run tests
         run: pytest tests -v
+
+  # The statistical safeguards depend only on NumPy, so they are also checked
+  # without Orange or Qt installed: this guards against the module acquiring an
+  # accidental dependency on the widget stack.
+  standalone-statistics:
+    name: Statistics module without Orange
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install numpy pytest statsmodels scipy
+      - run: pytest tests/test_statsafe.py -v

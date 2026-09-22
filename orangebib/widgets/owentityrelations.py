@@ -43,6 +43,8 @@ from Orange.data import (
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
 from Orange.widgets.settings import Setting
 
+from orangebib import statsafe
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -252,6 +254,8 @@ class OWEntityRelations(OWWidget):
         few_rows = Msg("Only {} row entities")
         few_cols = Msg("Only {} column entities")
         same_entity = Msg("Same entity type for rows and columns")
+        sparse_table = Msg("{}")
+        low_inertia = Msg("{}")
 
     class Information(OWWidget.Information):
         computing = Msg("Computing…")
@@ -735,6 +739,7 @@ class OWEntityRelations(OWWidget):
         nr = len(row_items); nc = len(col_items)
         if nr < 3: self.Warning.few_rows(nr)
         if nc < 3: self.Warning.few_cols(nc)
+        self._raise_statistical_warnings()
 
         parts = [f"{nr}×{nc} matrix"]
         if chi_df is not None: parts.append("χ²")
@@ -742,7 +747,27 @@ class OWEntityRelations(OWWidget):
         if assoc_df is not None: parts.append("assoc")
         self.status_label.setText(f"✅ {' · '.join(parts)}")
 
+    def _raise_statistical_warnings(self):
+        """Report assumption violations for chi-square and CA on this table.
+
+        Co-occurrence matrices over 20 x 20 entities are typically sparse, so
+        the chi-square approximation and a two-dimensional biplot can both be
+        misleading without an explicit caution.
+        """
+        self.Warning.sparse_table.clear()
+        self.Warning.low_inertia.clear()
+        diag = getattr(self, "_chi_diagnostics", None)
+        if diag and diag.get("sparse"):
+            self.Warning.sparse_table(diag["message"])
+        inertia = getattr(self, "_ca_inertia", None)
+        if inertia:
+            msg = statsafe.inertia_warning(inertia)
+            if msg:
+                self.Warning.low_inertia(msg)
+
     def _compute_relationships(self):
+        self._chi_diagnostics = None
+        self._ca_inertia = None
         df = self._df
         row_cfg = list(ENTITY_CONFIGS.values())[self.row_entity_idx]
         col_cfg = list(ENTITY_CONFIGS.values())[self.col_entity_idx]
@@ -895,6 +920,17 @@ class OWEntityRelations(OWWidget):
             return None
         resid = (mat - exp) / np.where(exp > 0, np.sqrt(exp), 1)
         contrib = (mat - exp) ** 2 / np.where(exp > 0, exp, 1)
+        # Every cell of the table is inspected simultaneously, so cell-level
+        # significance is reported from Haberman adjusted residuals (which are
+        # asymptotically standard normal) with Benjamini-Hochberg and
+        # Bonferroni corrections across all row x column cells.
+        adj = statsafe.adjusted_residuals(mat, exp)
+        p_raw = statsafe.residual_pvalues(adj)
+        p_bh = statsafe.adjust_pvalues(p_raw.ravel(), method="fdr_bh").reshape(p_raw.shape)
+        p_bonf = statsafe.adjust_pvalues(
+            p_raw.ravel(), method="bonferroni").reshape(p_raw.shape)
+        diag = statsafe.contingency_diagnostics(mat, exp, chi2=chi2)
+        self._chi_diagnostics = diag
         rows = []
         for i, r in enumerate(row_items):
             for j, c in enumerate(col_items):
@@ -903,15 +939,27 @@ class OWEntityRelations(OWWidget):
                     "Observed": int(mat[i, j]),
                     "Expected": round(float(exp[i, j]), 2),
                     "Std. residual": round(float(resid[i, j]), 3),
+                    "Adj. residual": round(float(adj[i, j]), 3),
+                    "p-value": round(float(p_raw[i, j]), 4),
+                    "p (BH)": round(float(p_bh[i, j]), 4),
+                    "p (Bonferroni)": round(float(p_bonf[i, j]), 4),
                     "Contribution": round(float(contrib[i, j]), 4),
                 })
         df = pd.DataFrame(rows)
         df = df.sort_values("Contribution", ascending=False).reset_index(drop=True)
-        # Add summary row
+        # Add summary rows
         df = pd.concat([df, pd.DataFrame([{
-            "Row": f"[Overall: χ²={chi2:.2f}, p={pv:.2e}, df={dof}]",
+            "Row": f"[Overall: χ²={chi2:.2f}, p={pv:.2e}, df={dof}, "
+                   f"Cramér's V={diag['cramers_v']:.3f}]",
             "Column": "", "Observed": "", "Expected": "",
             "Std. residual": "", "Contribution": round(chi2, 2)}])],
+            ignore_index=True)
+        df = pd.concat([df, pd.DataFrame([{
+            "Row": f"[Expected frequencies: min={diag['min_expected']:.2f}, "
+                   f"{diag['n_low']}/{diag['n_cells']} cells < "
+                   f"{statsafe.MIN_EXPECTED:.0f}]",
+            "Column": "", "Observed": "", "Expected": "",
+            "Std. residual": "", "Contribution": ""}])],
             ignore_index=True)
         return df
 
@@ -935,7 +983,9 @@ class OWEntityRelations(OWWidget):
             return None
         k = min(k, len(s))
         ine = s[:k] ** 2
-        ti = ine.sum()
+        # Total inertia must be summed over ALL dimensions, not only the k
+        # retained ones, otherwise the reported percentages are inflated.
+        ti = float((s ** 2).sum())
         rc = (U[:, :k] * s[:k]) / np.sqrt(r)
         cc = (Vt[:k, :].T * s[:k]) / np.sqrt(c.T)
         rows = []
@@ -950,11 +1000,16 @@ class OWEntityRelations(OWWidget):
                 row[f"Dim {d+1}"] = round(float(cc[j, d]), 6)
             rows.append(row)
         df = pd.DataFrame(rows)
+        summary = statsafe.inertia_summary(s, max_dims=min(k, 3))
+        self._ca_inertia = statsafe.inertia_summary(s, max_dims=len(s))
         for d in range(min(k, 3)):
             pct = ine[d] / ti * 100 if ti > 0 else 0
-            df = pd.concat([df, pd.DataFrame([{
-                "Entity": f"[Inertia Dim {d+1}]", "Type": "Info",
-                f"Dim {d+1}": round(pct, 2)}])], ignore_index=True)
+            info = {"Entity": f"[Inertia Dim {d+1}]", "Type": "Info",
+                    f"Dim {d+1}": round(pct, 2)}
+            if d < len(summary):
+                info["Eigenvalue"] = round(summary[d]["eigenvalue"], 6)
+                info["Cumulative %"] = round(summary[d]["cumulative_pct"], 2)
+            df = pd.concat([df, pd.DataFrame([info])], ignore_index=True)
         return df
 
     # ── association measures ──
@@ -1867,6 +1922,8 @@ class OWEntityRelations(OWWidget):
 
     def _clear_results(self):
         self._matrix_df = self._chi_df = self._ca_df = self._assoc_df = None
+        self._chi_diagnostics = None
+        self._ca_inertia = None
         self._row_items = []
         self._col_items = []
         self._selected_rows.clear()
