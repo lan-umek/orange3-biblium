@@ -15,9 +15,6 @@ pytest.importorskip("Orange")
 from orangebib.widgets.owgroupassociations import OWGroupAssociations  # noqa: E402
 from orangebib.widgets.owentityrelations import OWEntityRelations  # noqa: E402
 
-_SKIP_ATTRS = {"__dict__", "__weakref__"}
-
-
 def shim(cls, **attrs):
     """A plain object carrying the widget class's own methods.
 
@@ -26,7 +23,10 @@ def shim(cls, **attrs):
     therefore copied onto an ordinary class. Defined locally rather than
     imported so this module stays independent of pytest's import mode.
     """
-    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    # Dunder members are excluded: copying __init__ would run the widget
+    # constructor, and its zero-argument super() is bound to the original
+    # class, which this object is not an instance of.
+    namespace = {k: v for k, v in vars(cls).items() if not k.startswith("__")}
     obj = type(cls.__name__ + "Shim", (), namespace)()
     obj.__dict__.update(attrs)
     return obj

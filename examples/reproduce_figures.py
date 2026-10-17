@@ -48,9 +48,6 @@ FIG3_TOP_N, FIG3_MIN_FREQ = 20, 3
 
 TOLERANCE = 1e-6
 
-_SKIP_ATTRS = {"__dict__", "__weakref__"}
-
-
 def _shim(cls, **attrs):
     """A plain object carrying the widget class's own methods.
 
@@ -59,7 +56,10 @@ def _shim(cls, **attrs):
     depend only on a few settings, so they are copied onto an ordinary class:
     this runs exactly the code the widgets run, without any Qt object.
     """
-    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    # Dunder members are excluded: copying __init__ would run the widget
+    # constructor, and its zero-argument super() is bound to the original
+    # class, which this object is not an instance of.
+    namespace = {k: v for k, v in vars(cls).items() if not k.startswith("__")}
     obj = type(cls.__name__ + "Shim", (), namespace)()
     obj.__dict__.update(attrs)
     return obj

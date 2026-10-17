@@ -26,9 +26,6 @@ from orangebib.widgets.owentityrelations import OWEntityRelations  # noqa: E402
 
 TOL = 1e-9
 
-_SKIP_ATTRS = {"__dict__", "__weakref__"}
-
-
 def shim(cls, **attrs):
     """A plain object carrying the widget class's own methods.
 
@@ -38,7 +35,10 @@ def shim(cls, **attrs):
     ordinary class: this exercises exactly the code the widgets run, without
     constructing any Qt object.
     """
-    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    # Dunder members are excluded: copying __init__ would run the widget
+    # constructor, and its zero-argument super() is bound to the original
+    # class, which this object is not an instance of.
+    namespace = {k: v for k, v in vars(cls).items() if not k.startswith("__")}
     obj = type(cls.__name__ + "Shim", (), namespace)()
     obj.__dict__.update(attrs)
     return obj
