@@ -11,8 +11,8 @@ the test itself (SciPy, NumPy or a closed-form expression) and, where the
 operation has a direct Biblium counterpart, against the Biblium API on the
 same input with the same parameters.
 
-Widgets are instantiated with ``__new__`` so that the numerical methods can be
-exercised without constructing Qt objects; this keeps the tests fast and
+The numerical methods are exercised on a lightweight stand-in object (see
+``shim``) so that no Qt object is constructed; this keeps the tests fast and
 headless-safe on all three supported platforms.
 """
 import numpy as np
@@ -25,6 +25,23 @@ from orangebib.widgets.owgroupassociations import OWGroupAssociations  # noqa: E
 from orangebib.widgets.owentityrelations import OWEntityRelations  # noqa: E402
 
 TOL = 1e-9
+
+_SKIP_ATTRS = {"__dict__", "__weakref__"}
+
+
+def shim(cls, **attrs):
+    """A plain object carrying the widget class's own methods.
+
+    ``OWWidget.__new__`` builds the GUI and needs a running QApplication, so a
+    real instance cannot be created headlessly. The computational methods,
+    however, depend only on a few settings, so they are copied onto an
+    ordinary class: this exercises exactly the code the widgets run, without
+    constructing any Qt object.
+    """
+    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    obj = type(cls.__name__ + "Shim", (), namespace)()
+    obj.__dict__.update(attrs)
+    return obj
 
 
 # ------------------------------------------------------------------ fixtures
@@ -62,10 +79,7 @@ def groups_matrix(docs):
 
 @pytest.fixture
 def assoc_widget():
-    w = OWGroupAssociations.__new__(OWGroupAssociations)
-    w.min_freq = 1
-    w.top_n = 100
-    return w
+    return shim(OWGroupAssociations, min_freq=1, top_n=100)
 
 
 def _contingency(widget, docs, gm, column, label):
@@ -291,7 +305,7 @@ def test_svd_matches_numpy(assoc_widget, docs, groups_matrix):
 
 def test_entity_relationships_chi_square_matches_scipy():
     sp = pytest.importorskip("scipy.stats")
-    w = OWEntityRelations.__new__(OWEntityRelations)
+    w = shim(OWEntityRelations)
     mat = np.array([[12.0, 3.0, 5.0], [4.0, 15.0, 6.0], [7.0, 5.0, 18.0]])
     rows, cols = ["a1", "a2", "a3"], ["k1", "k2", "k3"]
     chi2_ref, _, _, exp_ref = sp.chi2_contingency(mat)

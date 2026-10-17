@@ -15,13 +15,26 @@ pytest.importorskip("Orange")
 from orangebib.widgets.owgroupassociations import OWGroupAssociations  # noqa: E402
 from orangebib.widgets.owentityrelations import OWEntityRelations  # noqa: E402
 
+_SKIP_ATTRS = {"__dict__", "__weakref__"}
+
+
+def shim(cls, **attrs):
+    """A plain object carrying the widget class's own methods.
+
+    ``OWWidget.__new__`` builds the GUI and needs a running QApplication, so a
+    real instance cannot be created headlessly; the computational methods are
+    therefore copied onto an ordinary class. Defined locally rather than
+    imported so this module stays independent of pytest's import mode.
+    """
+    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    obj = type(cls.__name__ + "Shim", (), namespace)()
+    obj.__dict__.update(attrs)
+    return obj
+
 
 @pytest.fixture
 def widget():
-    w = OWGroupAssociations.__new__(OWGroupAssociations)
-    w.min_freq = 1
-    w.top_n = 100
-    return w
+    return shim(OWGroupAssociations, min_freq=1, top_n=100)
 
 
 def _contingency(w, df, gm, column="Authors", label="Author"):
@@ -108,7 +121,7 @@ def test_perfectly_uniform_table_has_zero_residuals(widget):
 
 
 def test_diversity_of_single_entity_group():
-    w = OWGroupAssociations.__new__(OWGroupAssociations)
+    w = shim(OWGroupAssociations)
     div = w._calc_diversity(np.array([[10.0]]), ["g"])
     # One entity: no uncertainty, and evenness is undefined -> reported as 0.
     assert float(div.loc[0, "Shannon H"]) == pytest.approx(0.0)
@@ -117,7 +130,7 @@ def test_diversity_of_single_entity_group():
 
 
 def test_entity_relations_empty_matrix_returns_none():
-    w = OWEntityRelations.__new__(OWEntityRelations)
+    w = shim(OWEntityRelations)
     assert w._calc_chi_square(np.empty((0, 0)), [], []) is None
     assert w._calc_ca(np.zeros((2, 2)), ["a", "b"], ["x", "y"]) is None
 

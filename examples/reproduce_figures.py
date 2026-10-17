@@ -48,6 +48,22 @@ FIG3_TOP_N, FIG3_MIN_FREQ = 20, 3
 
 TOLERANCE = 1e-6
 
+_SKIP_ATTRS = {"__dict__", "__weakref__"}
+
+
+def _shim(cls, **attrs):
+    """A plain object carrying the widget class's own methods.
+
+    ``OWWidget.__new__`` builds the GUI and requires a running QApplication,
+    so a real widget cannot be created headlessly. The computational methods
+    depend only on a few settings, so they are copied onto an ordinary class:
+    this runs exactly the code the widgets run, without any Qt object.
+    """
+    namespace = {k: v for k, v in vars(cls).items() if k not in _SKIP_ATTRS}
+    obj = type(cls.__name__ + "Shim", (), namespace)()
+    obj.__dict__.update(attrs)
+    return obj
+
 
 # --------------------------------------------------------------- data load --
 
@@ -93,8 +109,7 @@ def period_groups(df: pd.DataFrame) -> pd.DataFrame:
 def figure2_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     from orangebib.widgets.owgroupassociations import OWGroupAssociations
 
-    w = OWGroupAssociations.__new__(OWGroupAssociations)
-    w.min_freq, w.top_n = FIG2_MIN_FREQ, FIG2_TOP_N
+    w = _shim(OWGroupAssociations, min_freq=FIG2_MIN_FREQ, top_n=FIG2_TOP_N)
 
     gm = period_groups(df)
     groups = list(gm.columns)
@@ -116,7 +131,7 @@ def figure2_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 def figure3_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     from orangebib.widgets.owentityrelations import OWEntityRelations
 
-    w = OWEntityRelations.__new__(OWEntityRelations)
+    w = _shim(OWEntityRelations)
     rows_col = resolve(df, "authors")
     cols_col = resolve(df, "keywords")
 
