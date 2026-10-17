@@ -29,6 +29,7 @@ Figure 4  Workflow illustration; its numerical branches are covered by the
 from __future__ import annotations
 
 import argparse
+import io
 import os
 import sys
 
@@ -185,12 +186,27 @@ def _normalise(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _through_csv(df: pd.DataFrame) -> pd.DataFrame:
+    """Round-trip a table through CSV.
+
+    The reference tables are read from disk, so the computed tables must go
+    through the same serialization before they are compared: otherwise a
+    column holding both integers and empty summary cells is an object column
+    in memory but a float column with NaN after reading, and every row would
+    be reported as different.
+    """
+    buffer = io.StringIO()
+    df.to_csv(buffer, index=False)
+    buffer.seek(0)
+    return pd.read_csv(buffer)
+
+
 def compare(name: str, got: pd.DataFrame, path: str) -> bool:
     if not os.path.exists(path):
         print(f"  MISSING reference for {name}: {path}")
         return False
     ref = pd.read_csv(path)
-    got = _normalise(got.reset_index(drop=True))
+    got = _normalise(_through_csv(got.reset_index(drop=True)))
     ref = _normalise(ref)
     if list(got.columns) != list(ref.columns):
         print(f"  FAIL {name}: columns differ\n"

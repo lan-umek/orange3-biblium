@@ -1,0 +1,403 @@
+Row,Column,Observed,Expected,Std. residual,Adj. residual,p-value,p (BH),p (Bonferroni),Contribution
+James A. Evans,Publication,1,0.02,6.521,6.608,0.0,0.0,0.0,42.5225
+Wolfgang Glänzel,Scientific literature,5,0.49,6.408,6.696,0.0,0.0,0.0,41.0626
+Ismael Rafols,Discipline,4,0.39,5.785,6.022,0.0,0.0,0.0,33.4664
+Blaise Cronin,Rank (graph theory),1,0.03,5.604,5.701,0.0,0.0,0.0,31.405
+Lutz Bornmann,Promotion (chess),1,0.05,4.311,4.429,0.0,0.0006,0.0038,18.5872
+Nees Jan van Eck,Normalization,4,0.63,4.249,4.467,0.0,0.0006,0.0032,18.0578
+Ludo Waltman,Normalization,5,1.0,4.011,4.276,0.0,0.0011,0.0076,16.0902
+Stefanie Haustein,Altmetrics,5,1.07,3.806,4.065,0.0,0.0024,0.0192,14.4885
+Diana Hicks,Prestige,1,0.07,3.592,3.653,0.0003,0.0115,0.1035,12.9007
+Martijn S. Visser,Empirical Research,2,0.27,3.332,3.442,0.0006,0.0231,0.2312,11.103
+Wolfgang Glänzel,Bibliographic database,1,0.09,3.036,3.118,0.0018,0.0554,0.7286,9.2149
+Ying Ding,Prestige,1,0.09,3.036,3.1,0.0019,0.0554,0.7752,9.2149
+Blaise Cronin,Prestige,1,0.09,3.036,3.1,0.0019,0.0554,0.7752,9.2149
+Mike Thelwall,Altmetrics,6,1.92,2.942,3.22,0.0013,0.0466,0.5123,8.6582
+Anthony F. J. van Raan,Co-citation,2,0.34,2.842,2.953,0.0031,0.084,1.0,8.0771
+Cassidy R. Sugimoto,Scope (computer science),1,0.1,2.764,2.822,0.0048,0.118,1.0,7.6406
+Henk F. Moed,Co-citation,2,0.37,2.695,2.806,0.005,0.118,1.0,7.265
+Blaise Cronin,Scope (computer science),1,0.12,2.542,2.601,0.0093,0.186,1.0,6.4636
+Martijn S. Visser,Scope (computer science),1,0.12,2.542,2.601,0.0093,0.186,1.0,6.4636
+Ismael Rafols,Scope (computer science),1,0.12,2.542,2.601,0.0093,0.186,1.0,6.4636
+Martijn S. Visser,Normalization,2,0.42,2.44,2.545,0.0109,0.2051,1.0,5.9552
+Diana Hicks,Publication,1,0.13,2.356,2.41,0.0159,0.2772,1.0,5.5515
+Yves Gingras,Impact factor,9,4.38,2.206,2.534,0.0113,0.2051,1.0,4.8666
+Cassidy R. Sugimoto,Altmetrics,2,0.5,2.128,2.237,0.0253,0.4209,1.0,4.5282
+Blaise Cronin,Citation index,1,0.18,1.934,1.987,0.047,0.671,1.0,3.7423
+Ying Ding,Informetrics,1,0.18,1.934,1.987,0.047,0.671,1.0,3.7423
+Ying Ding,Citation index,1,0.18,1.934,1.987,0.047,0.671,1.0,3.7423
+Henk F. Moed,Scientific literature,2,0.58,1.874,1.966,0.0493,0.6799,1.0,3.5118
+Eugene Garfield,Impact factor,2,0.58,1.852,2.019,0.0434,0.671,1.0,3.4304
+Eugene Garfield,Discipline,1,0.19,1.825,1.885,0.0594,0.7925,1.0,3.3294
+Ying Ding,Co-citation,1,0.21,1.726,1.775,0.0758,0.9135,1.0,2.9776
+Ismael Rafols,Co-citation,1,0.21,1.726,1.775,0.0758,0.9135,1.0,2.9776
+Loet Leydesdorff,Discipline,2,0.63,1.718,1.806,0.0709,0.9135,1.0,2.9525
+Bo-Christer Björk,Publication,1,0.22,1.635,1.686,0.0918,0.9135,1.0,2.6747
+Yves Gingras,Publication,2,0.67,1.615,1.734,0.083,0.9135,1.0,2.6075
+Yves Gingras,Citation index,2,0.67,1.615,1.734,0.083,0.9135,1.0,2.6075
+Loet Leydesdorff,Normalization,2,0.68,1.597,1.682,0.0926,0.9135,1.0,2.5498
+Cassidy R. Sugimoto,Empirical Research,1,0.24,1.573,1.622,0.1049,0.9135,1.0,2.4741
+Wolfgang Glänzel,Citation analysis,5,2.56,1.523,1.758,0.0788,0.9135,1.0,2.3206
+Diana Hicks,Scientific literature,1,0.25,1.514,1.564,0.1178,0.9135,1.0,2.2926
+Yves Gingras,Altmetrics,0,2.13,-1.461,-1.609,0.1076,0.9135,1.0,2.1348
+Vincent Larivière,Normalization,0,2.04,-1.43,-1.59,0.1119,0.9135,1.0,2.0449
+Blaise Cronin,Empirical Research,1,0.27,1.406,1.453,0.1463,0.9135,1.0,1.978
+Blaise Cronin,Scholarly Communication,1,0.27,1.406,1.453,0.1463,0.9135,1.0,1.978
+Ying Ding,Scholarly Communication,1,0.27,1.406,1.453,0.1463,0.9135,1.0,1.978
+Vincent Larivière,Impact factor,9,5.7,1.384,1.621,0.1051,0.9135,1.0,1.9156
+Bo-Christer Björk,Web of science,2,0.79,1.368,1.453,0.1462,0.9135,1.0,1.8722
+Yves Gingras,Citation analysis,3,6.4,-1.345,-1.61,0.1074,0.9135,1.0,1.8098
+Anthony F. J. van Raan,Citation analysis,5,2.78,1.335,1.544,0.1226,0.9135,1.0,1.7834
+Lutz Bornmann,Value (mathematics),1,0.29,1.31,1.358,0.1744,0.9135,1.0,1.7152
+Diana Hicks,Discipline,1,0.29,1.31,1.358,0.1744,0.9135,1.0,1.7152
+Vincent Larivière,Bibliographic database,1,0.29,1.31,1.423,0.1549,0.9135,1.0,1.7152
+Ismael Rafols,Citation analysis,0,1.71,-1.307,-1.496,0.1346,0.9135,1.0,1.7079
+Bo-Christer Björk,Impact factor,3,1.46,1.274,1.405,0.1601,0.9135,1.0,1.6222
+Yves Gingras,Normalization,0,1.57,-1.254,-1.368,0.1715,0.9135,1.0,1.573
+Nees Jan van Eck,Citation impact,3,1.48,1.246,1.361,0.1734,0.9135,1.0,1.5513
+Ludo Waltman,Web of science,3,1.49,1.232,1.331,0.1831,0.9135,1.0,1.5169
+Wolfgang Glänzel,Citation impact,0,1.48,-1.218,-1.331,0.1831,0.9135,1.0,1.4831
+Vincent Larivière,Informetrics,2,0.88,1.2,1.314,0.189,0.9135,1.0,1.4405
+Vincent Larivière,Citation index,2,0.88,1.2,1.314,0.189,0.9135,1.0,1.4405
+Vincent Larivière,Value (mathematics),2,0.88,1.2,1.314,0.189,0.9135,1.0,1.4405
+Yves Gingras,Citation impact,6,3.71,1.19,1.35,0.1771,0.9135,1.0,1.417
+Mike Thelwall,Normalization,0,1.42,-1.19,-1.289,0.1973,0.9135,1.0,1.4157
+Henk F. Moed,Citation analysis,5,2.99,1.163,1.348,0.1778,0.9135,1.0,1.3534
+Ludo Waltman,Altmetrics,0,1.35,-1.163,-1.252,0.2106,0.9135,1.0,1.3521
+Vincent Larivière,Empirical Research,0,1.31,-1.147,-1.262,0.2069,0.9135,1.0,1.3146
+Mike Thelwall,Scholarly Communication,2,0.91,1.142,1.226,0.2203,0.9135,1.0,1.3052
+Stefanie Haustein,Informetrics,1,0.34,1.142,1.189,0.2345,0.9135,1.0,1.3037
+Stefanie Haustein,Value (mathematics),1,0.34,1.142,1.189,0.2345,0.9135,1.0,1.3037
+Bo-Christer Björk,Scholarly Communication,1,0.34,1.142,1.184,0.2364,0.9135,1.0,1.3037
+Loet Leydesdorff,Co-citation,1,0.34,1.129,1.173,0.2407,0.9135,1.0,1.2749
+Blaise Cronin,Impact factor,0,1.17,-1.081,-1.188,0.2349,0.9135,1.0,1.1685
+Ying Ding,Impact factor,0,1.17,-1.081,-1.188,0.2349,0.9135,1.0,1.1685
+Martijn S. Visser,Impact factor,0,1.17,-1.081,-1.188,0.2349,0.9135,1.0,1.1685
+Ludo Waltman,Citation impact,4,2.35,1.078,1.195,0.2322,0.9135,1.0,1.1617
+Mike Thelwall,Scientific literature,0,1.11,-1.055,-1.136,0.2559,0.9135,1.0,1.1124
+Henk F. Moed,Web of science,0,1.1,-1.049,-1.123,0.2614,0.9135,1.0,1.1011
+Vincent Larivière,Co-citation,0,1.02,-1.011,-1.109,0.2675,0.9135,1.0,1.0225
+Anthony F. J. van Raan,Web of science,0,1.02,-1.011,-1.08,0.2801,0.9135,1.0,1.0225
+Yves Gingras,Empirical Research,0,1.01,-1.006,-1.086,0.2776,0.9135,1.0,1.0112
+Henk F. Moed,Altmetrics,0,1.0,-0.998,-1.064,0.2874,0.9135,1.0,0.9963
+Ismael Rafols,Citation impact,0,0.99,-0.994,-1.078,0.2808,0.9135,1.0,0.9888
+Blaise Cronin,Citation impact,0,0.99,-0.994,-1.078,0.2808,0.9135,1.0,0.9888
+Ying Ding,Citation impact,0,0.99,-0.994,-1.078,0.2808,0.9135,1.0,0.9888
+Wolfgang Glänzel,Web of science,0,0.94,-0.972,-1.036,0.3004,0.9135,1.0,0.9438
+Lutz Bornmann,Web of science,2,1.02,0.967,1.033,0.3018,0.9135,1.0,0.9346
+Anthony F. J. van Raan,Altmetrics,0,0.93,-0.962,-1.023,0.3062,0.9135,1.0,0.9251
+Ludo Waltman,Discipline,0,0.93,-0.962,-1.023,0.3062,0.9135,1.0,0.9251
+Loet Leydesdorff,Altmetrics,0,0.93,-0.962,-1.023,0.3062,0.9135,1.0,0.9251
+Mike Thelwall,Empirical Research,0,0.91,-0.954,-1.024,0.306,0.9135,1.0,0.9101
+Nees Jan van Eck,Empirical Research,1,0.4,0.936,0.975,0.3297,0.9135,1.0,0.8767
+Vincent Larivière,Publication,0,0.88,-0.936,-1.025,0.3055,0.9135,1.0,0.8764
+Diana Hicks,Impact factor,0,0.88,-0.936,-1.025,0.3055,0.9135,1.0,0.8764
+Wolfgang Glänzel,Altmetrics,0,0.85,-0.924,-0.981,0.3265,0.9135,1.0,0.8539
+Nees Jan van Eck,Altmetrics,0,0.85,-0.924,-0.981,0.3265,0.9135,1.0,0.8539
+Yves Gingras,Co-citation,0,0.79,-0.887,-0.954,0.3401,0.9135,1.0,0.7865
+Stefanie Haustein,Normalization,0,0.79,-0.887,-0.938,0.3484,0.9135,1.0,0.7865
+Ludo Waltman,Scientific literature,0,0.78,-0.885,-0.938,0.3485,0.9135,1.0,0.7828
+Diana Hicks,Citation impact,0,0.74,-0.861,-0.93,0.3522,0.9135,1.0,0.7416
+Henk F. Moed,Normalization,0,0.73,-0.857,-0.904,0.3659,0.9135,1.0,0.7341
+Stefanie Haustein,Discipline,0,0.73,-0.855,-0.902,0.3671,0.9135,1.0,0.7303
+Lutz Bornmann,Empirical Research,1,0.44,0.849,0.885,0.3761,0.9135,1.0,0.7203
+Anthony F. J. van Raan,Empirical Research,1,0.44,0.849,0.885,0.3761,0.9135,1.0,0.7203
+Lutz Bornmann,Scholarly Communication,1,0.44,0.849,0.885,0.3761,0.9135,1.0,0.7203
+Bo-Christer Björk,Altmetrics,0,0.71,-0.844,-0.892,0.3723,0.9135,1.0,0.7116
+Mike Thelwall,Co-citation,0,0.71,-0.841,-0.899,0.3685,0.9135,1.0,0.7079
+Lutz Bornmann,Normalization,0,0.68,-0.826,-0.87,0.3845,0.9135,1.0,0.6816
+Henk F. Moed,Discipline,0,0.68,-0.826,-0.87,0.3845,0.9135,1.0,0.6816
+Stefanie Haustein,Impact factor,1,2.19,-0.805,-0.896,0.3701,0.9135,1.0,0.6474
+Ludo Waltman,Scholarly Communication,0,0.64,-0.8,-0.845,0.3983,0.9135,1.0,0.6404
+Anthony F. J. van Raan,Discipline,0,0.63,-0.796,-0.836,0.403,0.9135,1.0,0.633
+Lutz Bornmann,Discipline,0,0.63,-0.796,-0.836,0.403,0.9135,1.0,0.633
+Ying Ding,Web of science,0,0.63,-0.793,-0.839,0.4014,0.9135,1.0,0.6292
+Wolfgang Glänzel,Normalization,0,0.63,-0.793,-0.834,0.4044,0.9135,1.0,0.6292
+Martijn S. Visser,Web of science,0,0.63,-0.793,-0.839,0.4014,0.9135,1.0,0.6292
+Blaise Cronin,Web of science,0,0.63,-0.793,-0.839,0.4014,0.9135,1.0,0.6292
+Stefanie Haustein,Scientific literature,0,0.62,-0.786,-0.826,0.4086,0.9135,1.0,0.618
+Mike Thelwall,Citation index,0,0.61,-0.779,-0.831,0.406,0.9135,1.0,0.6067
+Bo-Christer Björk,Citation analysis,1,2.13,-0.777,-0.893,0.372,0.9135,1.0,0.6033
+Henk F. Moed,Empirical Research,1,0.47,0.769,0.803,0.4218,0.9135,1.0,0.591
+Diana Hicks,Web of science,1,0.47,0.769,0.81,0.4179,0.9135,1.0,0.591
+Vincent Larivière,Scope (computer science),0,0.58,-0.764,-0.833,0.4046,0.9135,1.0,0.5843
+Nees Jan van Eck,Discipline,0,0.58,-0.764,-0.802,0.4226,0.9135,1.0,0.5843
+Wolfgang Glänzel,Discipline,0,0.58,-0.764,-0.802,0.4226,0.9135,1.0,0.5843
+Martijn S. Visser,Altmetrics,0,0.57,-0.755,-0.795,0.4267,0.9135,1.0,0.5693
+Ismael Rafols,Altmetrics,0,0.57,-0.755,-0.795,0.4267,0.9135,1.0,0.5693
+Blaise Cronin,Altmetrics,0,0.57,-0.755,-0.795,0.4267,0.9135,1.0,0.5693
+Cassidy R. Sugimoto,Web of science,0,0.55,-0.742,-0.783,0.4334,0.9135,1.0,0.5506
+Vincent Larivière,Altmetrics,4,2.78,0.735,0.825,0.4091,0.9135,1.0,0.5405
+Loet Leydesdorff,Citation analysis,4,2.78,0.735,0.85,0.3954,0.9135,1.0,0.5405
+Loet Leydesdorff,Scientific literature,0,0.54,-0.732,-0.766,0.4435,0.9135,1.0,0.5356
+Lutz Bornmann,Scientific literature,0,0.54,-0.732,-0.766,0.4435,0.9135,1.0,0.5356
+Bo-Christer Björk,Normalization,0,0.52,-0.724,-0.758,0.4483,0.9135,1.0,0.5243
+Stefanie Haustein,Empirical Research,0,0.51,-0.711,-0.745,0.4565,0.9135,1.0,0.5056
+Ludo Waltman,Co-citation,0,0.5,-0.706,-0.742,0.458,0.9135,1.0,0.4981
+Nees Jan van Eck,Scientific literature,0,0.49,-0.703,-0.735,0.4625,0.9135,1.0,0.4944
+Eugene Garfield,Citation impact,0,0.49,-0.703,-0.757,0.4492,0.9135,1.0,0.4944
+Bo-Christer Björk,Discipline,0,0.49,-0.698,-0.729,0.4659,0.9135,1.0,0.4869
+Stefanie Haustein,Scholarly Communication,1,0.51,0.695,0.728,0.4666,0.9135,1.0,0.4834
+Bo-Christer Björk,Citation impact,2,1.24,0.687,0.748,0.4543,0.9135,1.0,0.4723
+Henk F. Moed,Scholarly Communication,0,0.47,-0.687,-0.718,0.4728,0.9135,1.0,0.4719
+Yves Gingras,Scope (computer science),0,0.45,-0.67,-0.717,0.4734,0.9135,1.0,0.4494
+Henk F. Moed,Impact factor,3,2.04,0.668,0.742,0.4578,0.9135,1.0,0.446
+Vincent Larivière,Prestige,0,0.44,-0.662,-0.72,0.4713,0.9135,1.0,0.4382
+Loet Leydesdorff,Scholarly Communication,0,0.44,-0.662,-0.69,0.4899,0.9135,1.0,0.4382
+Loet Leydesdorff,Empirical Research,0,0.44,-0.662,-0.69,0.4899,0.9135,1.0,0.4382
+Anthony F. J. van Raan,Scholarly Communication,0,0.44,-0.662,-0.69,0.4899,0.9135,1.0,0.4382
+Ludo Waltman,Publication,0,0.43,-0.653,-0.686,0.4929,0.9135,1.0,0.427
+Diana Hicks,Altmetrics,0,0.43,-0.653,-0.686,0.4929,0.9135,1.0,0.427
+Ludo Waltman,Citation index,0,0.43,-0.653,-0.686,0.4929,0.9135,1.0,0.427
+Ludo Waltman,Value (mathematics),0,0.43,-0.653,-0.686,0.4929,0.9135,1.0,0.427
+Ludo Waltman,Informetrics,0,0.43,-0.653,-0.686,0.4929,0.9135,1.0,0.427
+Lutz Bornmann,Impact factor,1,1.9,-0.652,-0.724,0.4692,0.9135,1.0,0.4255
+Anthony F. J. van Raan,Impact factor,1,1.9,-0.652,-0.724,0.4692,0.9135,1.0,0.4255
+Loet Leydesdorff,Impact factor,1,1.9,-0.652,-0.724,0.4692,0.9135,1.0,0.4255
+Ying Ding,Normalization,0,0.42,-0.648,-0.676,0.4993,0.9135,1.0,0.4195
+Blaise Cronin,Normalization,0,0.42,-0.648,-0.676,0.4993,0.9135,1.0,0.4195
+Ismael Rafols,Normalization,0,0.42,-0.648,-0.676,0.4993,0.9135,1.0,0.4195
+Bo-Christer Björk,Scientific literature,0,0.41,-0.642,-0.668,0.504,0.9135,1.0,0.412
+Mike Thelwall,Scope (computer science),0,0.4,-0.636,-0.676,0.4991,0.9135,1.0,0.4045
+Wolfgang Glänzel,Empirical Research,0,0.4,-0.636,-0.662,0.5079,0.9135,1.0,0.4045
+Nees Jan van Eck,Scholarly Communication,0,0.4,-0.636,-0.662,0.5079,0.9135,1.0,0.4045
+Wolfgang Glänzel,Scholarly Communication,0,0.4,-0.636,-0.662,0.5079,0.9135,1.0,0.4045
+Anthony F. J. van Raan,Scientific literature,1,0.54,0.635,0.664,0.5064,0.9135,1.0,0.4027
+Stefanie Haustein,Citation impact,1,1.85,-0.627,-0.69,0.4905,0.9135,1.0,0.3933
+Stefanie Haustein,Co-citation,0,0.39,-0.627,-0.654,0.513,0.9135,1.0,0.3933
+Ying Ding,Discipline,0,0.39,-0.624,-0.65,0.5159,0.9135,1.0,0.3895
+Blaise Cronin,Discipline,0,0.39,-0.624,-0.65,0.5159,0.9135,1.0,0.3895
+Martijn S. Visser,Discipline,0,0.39,-0.624,-0.65,0.5159,0.9135,1.0,0.3895
+Cassidy R. Sugimoto,Normalization,0,0.37,-0.606,-0.631,0.5282,0.9135,1.0,0.367
+Mike Thelwall,Web of science,3,2.12,0.601,0.661,0.5087,0.9135,1.0,0.3617
+Cassidy R. Sugimoto,Discipline,0,0.34,-0.584,-0.607,0.5441,0.9135,1.0,0.3408
+Lutz Bornmann,Co-citation,0,0.34,-0.584,-0.607,0.5441,0.9135,1.0,0.3408
+Stefanie Haustein,Publication,0,0.34,-0.581,-0.604,0.5455,0.9135,1.0,0.3371
+Stefanie Haustein,Citation index,0,0.34,-0.581,-0.604,0.5455,0.9135,1.0,0.3371
+Yves Gingras,Prestige,0,0.34,-0.581,-0.62,0.5354,0.9135,1.0,0.3371
+Bo-Christer Björk,Empirical Research,0,0.34,-0.581,-0.602,0.5472,0.9135,1.0,0.3371
+Ying Ding,Scientific literature,0,0.33,-0.574,-0.595,0.5517,0.9135,1.0,0.3296
+Martijn S. Visser,Scientific literature,0,0.33,-0.574,-0.595,0.5517,0.9135,1.0,0.3296
+Blaise Cronin,Scientific literature,0,0.33,-0.574,-0.595,0.5517,0.9135,1.0,0.3296
+Ismael Rafols,Scientific literature,0,0.33,-0.574,-0.595,0.5517,0.9135,1.0,0.3296
+Ying Ding,Altmetrics,1,0.57,0.571,0.601,0.5476,0.9135,1.0,0.3259
+Wolfgang Glänzel,Impact factor,1,1.75,-0.569,-0.63,0.5289,0.9135,1.0,0.3233
+Nees Jan van Eck,Impact factor,1,1.75,-0.569,-0.63,0.5289,0.9135,1.0,0.3233
+Diana Hicks,Normalization,0,0.31,-0.561,-0.583,0.56,0.9135,1.0,0.3146
+Henk F. Moed,Value (mathematics),0,0.31,-0.561,-0.583,0.56,0.9135,1.0,0.3146
+Henk F. Moed,Citation index,0,0.31,-0.561,-0.583,0.56,0.9135,1.0,0.3146
+Wolfgang Glänzel,Co-citation,0,0.31,-0.561,-0.582,0.5608,0.9135,1.0,0.3146
+Eugene Garfield,Web of science,0,0.31,-0.561,-0.589,0.556,0.9135,1.0,0.3146
+Henk F. Moed,Informetrics,0,0.31,-0.561,-0.583,0.56,0.9135,1.0,0.3146
+Henk F. Moed,Publication,0,0.31,-0.561,-0.583,0.56,0.9135,1.0,0.3146
+Nees Jan van Eck,Co-citation,0,0.31,-0.561,-0.582,0.5608,0.9135,1.0,0.3146
+Henk F. Moed,Citation impact,1,1.73,-0.555,-0.609,0.5424,0.9135,1.0,0.3083
+Mike Thelwall,Prestige,0,0.3,-0.551,-0.584,0.5591,0.9135,1.0,0.3034
+Anthony F. J. van Raan,Publication,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Loet Leydesdorff,Informetrics,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Anthony F. J. van Raan,Value (mathematics),0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Lutz Bornmann,Informetrics,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Anthony F. J. van Raan,Informetrics,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Loet Leydesdorff,Value (mathematics),0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Loet Leydesdorff,Publication,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Lutz Bornmann,Citation index,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Loet Leydesdorff,Citation index,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Lutz Bornmann,Publication,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Anthony F. J. van Raan,Citation index,0,0.29,-0.54,-0.56,0.5751,0.9135,1.0,0.2921
+Cassidy R. Sugimoto,Scientific literature,0,0.29,-0.537,-0.556,0.5784,0.9135,1.0,0.2884
+Ludo Waltman,Scope (computer science),0,0.28,-0.534,-0.558,0.577,0.9135,1.0,0.2846
+Eugene Garfield,Altmetrics,0,0.28,-0.534,-0.558,0.577,0.9135,1.0,0.2846
+Vincent Larivière,Web of science,4,3.07,0.532,0.6,0.5483,0.9135,1.0,0.2835
+Nees Jan van Eck,Value (mathematics),0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Nees Jan van Eck,Publication,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Ismael Rafols,Empirical Research,0,0.27,-0.519,-0.536,0.5917,0.9135,1.0,0.2697
+Martijn S. Visser,Scholarly Communication,0,0.27,-0.519,-0.536,0.5917,0.9135,1.0,0.2697
+Ismael Rafols,Scholarly Communication,0,0.27,-0.519,-0.536,0.5917,0.9135,1.0,0.2697
+Wolfgang Glänzel,Citation index,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Wolfgang Glänzel,Value (mathematics),0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Wolfgang Glänzel,Publication,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Ying Ding,Empirical Research,0,0.27,-0.519,-0.536,0.5917,0.9135,1.0,0.2697
+Wolfgang Glänzel,Informetrics,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Nees Jan van Eck,Informetrics,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Nees Jan van Eck,Citation index,0,0.27,-0.519,-0.537,0.591,0.9135,1.0,0.2697
+Bo-Christer Björk,Co-citation,0,0.26,-0.512,-0.529,0.5969,0.9135,1.0,0.2622
+Mike Thelwall,Informetrics,1,0.61,0.505,0.539,0.5902,0.9135,1.0,0.2549
+Mike Thelwall,Publication,1,0.61,0.505,0.539,0.5902,0.9135,1.0,0.2549
+Mike Thelwall,Value (mathematics),1,0.61,0.505,0.539,0.5902,0.9135,1.0,0.2549
+Cassidy R. Sugimoto,Scholarly Communication,0,0.24,-0.486,-0.501,0.6165,0.9135,1.0,0.236
+Vincent Larivière,Scientific literature,1,1.61,-0.479,-0.529,0.5968,0.9135,1.0,0.2291
+Mike Thelwall,Impact factor,3,3.94,-0.475,-0.542,0.5875,0.9135,1.0,0.2259
+Stefanie Haustein,Scope (computer science),0,0.22,-0.474,-0.492,0.623,0.9135,1.0,0.2247
+Yves Gingras,Bibliographic database,0,0.22,-0.474,-0.505,0.6135,0.9135,1.0,0.2247
+Bo-Christer Björk,Value (mathematics),0,0.22,-0.474,-0.489,0.6251,0.9135,1.0,0.2247
+Bo-Christer Björk,Informetrics,0,0.22,-0.474,-0.489,0.6251,0.9135,1.0,0.2247
+Bo-Christer Björk,Citation index,0,0.22,-0.474,-0.489,0.6251,0.9135,1.0,0.2247
+Ismael Rafols,Web of science,1,0.63,0.467,0.494,0.621,0.9135,1.0,0.2185
+Ludo Waltman,Impact factor,2,2.78,-0.465,-0.523,0.6013,0.9135,1.0,0.2166
+Ludo Waltman,Prestige,0,0.21,-0.462,-0.482,0.6297,0.9135,1.0,0.2135
+James A. Evans,Citation analysis,0,0.21,-0.462,-0.522,0.6017,0.9135,1.0,0.2135
+Vincent Larivière,Citation analysis,7,8.33,-0.459,-0.561,0.575,0.9135,1.0,0.2111
+Blaise Cronin,Co-citation,0,0.21,-0.458,-0.471,0.6375,0.9135,1.0,0.2097
+Eugene Garfield,Normalization,0,0.21,-0.458,-0.474,0.6355,0.9135,1.0,0.2097
+Henk F. Moed,Scope (computer science),0,0.21,-0.458,-0.474,0.6355,0.9135,1.0,0.2097
+Martijn S. Visser,Co-citation,0,0.21,-0.458,-0.471,0.6375,0.9135,1.0,0.2097
+Diana Hicks,Scholarly Communication,0,0.2,-0.45,-0.463,0.6436,0.9135,1.0,0.2022
+Diana Hicks,Empirical Research,0,0.2,-0.45,-0.463,0.6436,0.9135,1.0,0.2022
+Mike Thelwall,Bibliographic database,0,0.2,-0.45,-0.476,0.634,0.9135,1.0,0.2022
+Ludo Waltman,Empirical Research,1,0.64,0.449,0.474,0.6353,0.9135,1.0,0.2019
+Yves Gingras,Discipline,2,1.46,0.446,0.486,0.6272,0.9135,1.0,0.1991
+Stefanie Haustein,Citation analysis,4,3.2,0.446,0.517,0.6049,0.9135,1.0,0.1987
+Loet Leydesdorff,Scope (computer science),0,0.19,-0.441,-0.456,0.6485,0.9135,1.0,0.1948
+Lutz Bornmann,Scope (computer science),0,0.19,-0.441,-0.456,0.6485,0.9135,1.0,0.1948
+Anthony F. J. van Raan,Scope (computer science),0,0.19,-0.441,-0.456,0.6485,0.9135,1.0,0.1948
+Cassidy R. Sugimoto,Co-citation,0,0.18,-0.428,-0.44,0.66,0.9135,1.0,0.1835
+Blaise Cronin,Informetrics,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ismael Rafols,Publication,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Wolfgang Glänzel,Scope (computer science),0,0.18,-0.424,-0.437,0.662,0.9135,1.0,0.1798
+Blaise Cronin,Value (mathematics),0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Martijn S. Visser,Publication,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ying Ding,Publication,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ying Ding,Value (mathematics),0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Martijn S. Visser,Value (mathematics),0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Martijn S. Visser,Informetrics,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Martijn S. Visser,Citation index,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Nees Jan van Eck,Scope (computer science),0,0.18,-0.424,-0.437,0.662,0.9135,1.0,0.1798
+Blaise Cronin,Publication,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ismael Rafols,Value (mathematics),0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ismael Rafols,Citation index,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Ismael Rafols,Informetrics,0,0.18,-0.424,-0.435,0.6633,0.9135,1.0,0.1798
+Stefanie Haustein,Prestige,0,0.17,-0.411,-0.425,0.6709,0.9135,1.0,0.1685
+Eugene Garfield,Scientific literature,0,0.16,-0.406,-0.418,0.6762,0.9135,1.0,0.1648
+Cassidy R. Sugimoto,Citation analysis,1,1.49,-0.404,-0.462,0.644,0.9135,1.0,0.1636
+Yves Gingras,Informetrics,1,0.67,0.397,0.426,0.6701,0.9135,1.0,0.1575
+Yves Gingras,Value (mathematics),1,0.67,0.397,0.426,0.6701,0.9135,1.0,0.1575
+Cassidy R. Sugimoto,Publication,0,0.16,-0.397,-0.407,0.6844,0.9135,1.0,0.1573
+Cassidy R. Sugimoto,Value (mathematics),0,0.16,-0.397,-0.407,0.6844,0.9135,1.0,0.1573
+Diana Hicks,Co-citation,0,0.16,-0.397,-0.407,0.6844,0.9135,1.0,0.1573
+Cassidy R. Sugimoto,Citation index,0,0.16,-0.397,-0.407,0.6844,0.9135,1.0,0.1573
+Henk F. Moed,Prestige,0,0.16,-0.397,-0.41,0.682,0.9135,1.0,0.1573
+Cassidy R. Sugimoto,Informetrics,0,0.16,-0.397,-0.407,0.6844,0.9135,1.0,0.1573
+Bo-Christer Björk,Scope (computer science),0,0.15,-0.387,-0.398,0.691,0.9135,1.0,0.1498
+Anthony F. J. van Raan,Normalization,1,0.68,0.386,0.406,0.6846,0.9135,1.0,0.1487
+Anthony F. J. van Raan,Prestige,0,0.15,-0.382,-0.394,0.6935,0.9135,1.0,0.1461
+Loet Leydesdorff,Prestige,0,0.15,-0.382,-0.394,0.6935,0.9135,1.0,0.1461
+James A. Evans,Impact factor,0,0.15,-0.382,-0.414,0.6786,0.9135,1.0,0.1461
+Vincent Larivière,Promotion (chess),0,0.15,-0.382,-0.414,0.6786,0.9135,1.0,0.1461
+Vincent Larivière,Rank (graph theory),0,0.15,-0.382,-0.414,0.6786,0.9135,1.0,0.1461
+Lutz Bornmann,Prestige,0,0.15,-0.382,-0.394,0.6935,0.9135,1.0,0.1461
+Ludo Waltman,Bibliographic database,0,0.14,-0.377,-0.393,0.6944,0.9135,1.0,0.1423
+Vincent Larivière,Citation impact,4,4.82,-0.374,-0.432,0.6658,0.9135,1.0,0.1396
+Diana Hicks,Value (mathematics),0,0.13,-0.367,-0.376,0.7072,0.9135,1.0,0.1348
+Eugene Garfield,Empirical Research,0,0.13,-0.367,-0.376,0.7066,0.9135,1.0,0.1348
+Wolfgang Glänzel,Prestige,0,0.13,-0.367,-0.378,0.7055,0.9135,1.0,0.1348
+Diana Hicks,Citation index,0,0.13,-0.367,-0.376,0.7072,0.9135,1.0,0.1348
+Nees Jan van Eck,Prestige,0,0.13,-0.367,-0.378,0.7055,0.9135,1.0,0.1348
+Diana Hicks,Informetrics,0,0.13,-0.367,-0.376,0.7072,0.9135,1.0,0.1348
+Eugene Garfield,Scholarly Communication,0,0.13,-0.367,-0.376,0.7066,0.9135,1.0,0.1348
+Mike Thelwall,Citation impact,4,3.34,0.363,0.409,0.6826,0.9135,1.0,0.1317
+James A. Evans,Citation impact,0,0.12,-0.352,-0.376,0.7067,0.9135,1.0,0.1236
+Nees Jan van Eck,Citation analysis,2,2.56,-0.351,-0.405,0.6855,0.9135,1.0,0.1232
+Ying Ding,Scope (computer science),0,0.12,-0.346,-0.354,0.7232,0.9135,1.0,0.1199
+Bo-Christer Björk,Prestige,0,0.11,-0.335,-0.344,0.7312,0.9135,1.0,0.1124
+Stefanie Haustein,Bibliographic database,0,0.11,-0.335,-0.346,0.7291,0.9135,1.0,0.1124
+Yves Gingras,Promotion (chess),0,0.11,-0.335,-0.356,0.7215,0.9135,1.0,0.1124
+Yves Gingras,Rank (graph theory),0,0.11,-0.335,-0.356,0.7215,0.9135,1.0,0.1124
+Henk F. Moed,Bibliographic database,0,0.1,-0.324,-0.334,0.7384,0.9135,1.0,0.1049
+Eugene Garfield,Co-citation,0,0.1,-0.324,-0.331,0.7409,0.9135,1.0,0.1049
+Mike Thelwall,Citation analysis,5,5.76,-0.318,-0.378,0.7051,0.9135,1.0,0.1013
+Mike Thelwall,Promotion (chess),0,0.1,-0.318,-0.336,0.7368,0.9135,1.0,0.1011
+Mike Thelwall,Rank (graph theory),0,0.1,-0.318,-0.336,0.7368,0.9135,1.0,0.1011
+Loet Leydesdorff,Bibliographic database,0,0.1,-0.312,-0.321,0.7481,0.9135,1.0,0.0974
+Lutz Bornmann,Bibliographic database,0,0.1,-0.312,-0.321,0.7481,0.9135,1.0,0.0974
+Anthony F. J. van Raan,Bibliographic database,0,0.1,-0.312,-0.321,0.7481,0.9135,1.0,0.0974
+Anthony F. J. van Raan,Citation impact,2,1.61,0.31,0.34,0.734,0.9135,1.0,0.0963
+Loet Leydesdorff,Citation impact,2,1.61,0.31,0.34,0.734,0.9135,1.0,0.0963
+Lutz Bornmann,Citation impact,2,1.61,0.31,0.34,0.734,0.9135,1.0,0.0963
+Martijn S. Visser,Prestige,0,0.09,-0.3,-0.306,0.7595,0.9135,1.0,0.0899
+Eugene Garfield,Publication,0,0.09,-0.3,-0.306,0.76,0.9135,1.0,0.0899
+Diana Hicks,Scope (computer science),0,0.09,-0.3,-0.306,0.76,0.9135,1.0,0.0899
+Eugene Garfield,Value (mathematics),0,0.09,-0.3,-0.306,0.76,0.9135,1.0,0.0899
+Nees Jan van Eck,Bibliographic database,0,0.09,-0.3,-0.308,0.7581,0.9135,1.0,0.0899
+Eugene Garfield,Informetrics,0,0.09,-0.3,-0.306,0.76,0.9135,1.0,0.0899
+Eugene Garfield,Citation index,0,0.09,-0.3,-0.306,0.76,0.9135,1.0,0.0899
+Ismael Rafols,Prestige,0,0.09,-0.3,-0.306,0.7595,0.9135,1.0,0.0899
+James A. Evans,Web of science,0,0.08,-0.28,-0.293,0.7697,0.9135,1.0,0.0787
+Cassidy R. Sugimoto,Prestige,0,0.08,-0.28,-0.286,0.775,0.9135,1.0,0.0787
+Mike Thelwall,Discipline,1,1.31,-0.274,-0.297,0.7667,0.9135,1.0,0.0753
+Vincent Larivière,Scholarly Communication,1,1.31,-0.274,-0.302,0.7626,0.9135,1.0,0.0753
+Bo-Christer Björk,Bibliographic database,0,0.07,-0.274,-0.28,0.7795,0.9135,1.0,0.0749
+James A. Evans,Altmetrics,0,0.07,-0.267,-0.277,0.7815,0.9135,1.0,0.0712
+Ludo Waltman,Promotion (chess),0,0.07,-0.267,-0.277,0.7815,0.9135,1.0,0.0712
+Ludo Waltman,Rank (graph theory),0,0.07,-0.267,-0.277,0.7815,0.9135,1.0,0.0712
+Diana Hicks,Citation analysis,1,1.28,-0.248,-0.283,0.7771,0.9135,1.0,0.0616
+Blaise Cronin,Bibliographic database,0,0.06,-0.245,-0.249,0.803,0.9135,1.0,0.0599
+Martijn S. Visser,Bibliographic database,0,0.06,-0.245,-0.249,0.803,0.9135,1.0,0.0599
+Ying Ding,Bibliographic database,0,0.06,-0.245,-0.249,0.803,0.9135,1.0,0.0599
+Ismael Rafols,Bibliographic database,0,0.06,-0.245,-0.249,0.803,0.9135,1.0,0.0599
+Eugene Garfield,Scope (computer science),0,0.06,-0.245,-0.249,0.8037,0.9135,1.0,0.0599
+Stefanie Haustein,Rank (graph theory),0,0.06,-0.237,-0.244,0.8069,0.9135,1.0,0.0562
+Stefanie Haustein,Promotion (chess),0,0.06,-0.237,-0.244,0.8069,0.9135,1.0,0.0562
+Yves Gingras,Web of science,2,2.36,-0.234,-0.259,0.7958,0.9135,1.0,0.0548
+James A. Evans,Normalization,0,0.05,-0.229,-0.236,0.8137,0.9135,1.0,0.0524
+Henk F. Moed,Rank (graph theory),0,0.05,-0.229,-0.236,0.8137,0.9135,1.0,0.0524
+Henk F. Moed,Promotion (chess),0,0.05,-0.229,-0.236,0.8137,0.9135,1.0,0.0524
+Cassidy R. Sugimoto,Bibliographic database,0,0.05,-0.229,-0.233,0.8158,0.9135,1.0,0.0524
+Ying Ding,Citation analysis,2,1.71,0.224,0.256,0.798,0.9135,1.0,0.05
+Martijn S. Visser,Citation analysis,2,1.71,0.224,0.256,0.798,0.9135,1.0,0.05
+Blaise Cronin,Citation analysis,2,1.71,0.224,0.256,0.798,0.9135,1.0,0.05
+Lutz Bornmann,Rank (graph theory),0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+Anthony F. J. van Raan,Promotion (chess),0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+Anthony F. J. van Raan,Rank (graph theory),0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+James A. Evans,Discipline,0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+Loet Leydesdorff,Promotion (chess),0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+Loet Leydesdorff,Rank (graph theory),0,0.05,-0.221,-0.227,0.8207,0.9135,1.0,0.0487
+Yves Gingras,Scientific literature,1,1.24,-0.212,-0.23,0.818,0.9135,1.0,0.045
+Eugene Garfield,Prestige,0,0.04,-0.212,-0.215,0.8299,0.9135,1.0,0.0449
+Diana Hicks,Bibliographic database,0,0.04,-0.212,-0.215,0.8296,0.9135,1.0,0.0449
+Wolfgang Glänzel,Promotion (chess),0,0.04,-0.212,-0.217,0.8279,0.9135,1.0,0.0449
+Wolfgang Glänzel,Rank (graph theory),0,0.04,-0.212,-0.217,0.8279,0.9135,1.0,0.0449
+Nees Jan van Eck,Promotion (chess),0,0.04,-0.212,-0.217,0.8279,0.9135,1.0,0.0449
+Nees Jan van Eck,Rank (graph theory),0,0.04,-0.212,-0.217,0.8279,0.9135,1.0,0.0449
+James A. Evans,Scientific literature,0,0.04,-0.203,-0.208,0.8355,0.9135,1.0,0.0412
+Bo-Christer Björk,Promotion (chess),0,0.04,-0.194,-0.198,0.8433,0.9135,1.0,0.0375
+Bo-Christer Björk,Rank (graph theory),0,0.04,-0.194,-0.198,0.8433,0.9135,1.0,0.0375
+James A. Evans,Empirical Research,0,0.03,-0.184,-0.187,0.8516,0.9135,1.0,0.0337
+James A. Evans,Scholarly Communication,0,0.03,-0.184,-0.187,0.8516,0.9135,1.0,0.0337
+Eugene Garfield,Bibliographic database,0,0.03,-0.173,-0.175,0.861,0.9135,1.0,0.03
+Ying Ding,Promotion (chess),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Martijn S. Visser,Rank (graph theory),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Martijn S. Visser,Promotion (chess),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Ismael Rafols,Promotion (chess),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Ismael Rafols,Rank (graph theory),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Ying Ding,Rank (graph theory),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Blaise Cronin,Promotion (chess),0,0.03,-0.173,-0.176,0.8602,0.9135,1.0,0.03
+Stefanie Haustein,Web of science,1,1.18,-0.166,-0.177,0.8591,0.9135,1.0,0.0274
+Cassidy R. Sugimoto,Promotion (chess),0,0.03,-0.162,-0.164,0.8694,0.9135,1.0,0.0262
+Cassidy R. Sugimoto,Rank (graph theory),0,0.03,-0.162,-0.164,0.8694,0.9135,1.0,0.0262
+James A. Evans,Co-citation,0,0.03,-0.162,-0.164,0.8694,0.9135,1.0,0.0262
+Eugene Garfield,Citation analysis,1,0.85,0.158,0.18,0.8575,0.9135,1.0,0.025
+Ismael Rafols,Impact factor,1,1.17,-0.156,-0.171,0.864,0.9135,1.0,0.0243
+Diana Hicks,Rank (graph theory),0,0.02,-0.15,-0.152,0.8793,0.9135,1.0,0.0225
+Diana Hicks,Promotion (chess),0,0.02,-0.15,-0.152,0.8793,0.9135,1.0,0.0225
+James A. Evans,Informetrics,0,0.02,-0.15,-0.152,0.8793,0.9135,1.0,0.0225
+James A. Evans,Value (mathematics),0,0.02,-0.15,-0.152,0.8793,0.9135,1.0,0.0225
+James A. Evans,Citation index,0,0.02,-0.15,-0.152,0.8793,0.9135,1.0,0.0225
+Cassidy R. Sugimoto,Citation impact,1,0.87,0.145,0.157,0.8753,0.9135,1.0,0.021
+Lutz Bornmann,Citation analysis,3,2.78,0.135,0.156,0.8761,0.9135,1.0,0.0182
+James A. Evans,Scope (computer science),0,0.01,-0.122,-0.124,0.9017,0.9296,1.0,0.015
+Eugene Garfield,Promotion (chess),0,0.01,-0.122,-0.124,0.9017,0.9296,1.0,0.015
+Eugene Garfield,Rank (graph theory),0,0.01,-0.122,-0.124,0.9017,0.9296,1.0,0.015
+James A. Evans,Prestige,0,0.01,-0.106,-0.107,0.9149,0.9408,1.0,0.0112
+James A. Evans,Bibliographic database,0,0.01,-0.087,-0.087,0.9306,0.9542,1.0,0.0075
+Lutz Bornmann,Altmetrics,1,0.93,0.078,0.083,0.934,0.9542,1.0,0.0061
+Vincent Larivière,Discipline,2,1.9,0.073,0.081,0.9351,0.9542,1.0,0.0054
+James A. Evans,Rank (graph theory),0,0.0,-0.061,-0.061,0.951,0.9631,1.0,0.0037
+James A. Evans,Promotion (chess),0,0.0,-0.061,-0.061,0.951,0.9631,1.0,0.0037
+Nees Jan van Eck,Web of science,1,0.94,0.058,0.062,0.9508,0.9631,1.0,0.0033
+Ludo Waltman,Citation analysis,4,4.06,-0.028,-0.033,0.974,0.9838,1.0,0.0008
+Cassidy R. Sugimoto,Impact factor,1,1.02,-0.022,-0.024,0.9806,0.986,1.0,0.0005
+Loet Leydesdorff,Web of science,1,1.02,-0.022,-0.024,0.9811,0.986,1.0,0.0005
+Yves Gingras,Scholarly Communication,1,1.01,-0.011,-0.012,0.9904,0.9904,1.0,0.0001
+Martijn S. Visser,Citation impact,1,0.99,0.011,0.012,0.9902,0.9904,1.0,0.0001
+"[Overall: χ²=535.66, p=6.04e-09, df=361, Cramér's V=0.325]",,,,,,,,,535.66
+"[Expected frequencies: min=0.00, 396/400 cells < 5]",,,,,,,,,

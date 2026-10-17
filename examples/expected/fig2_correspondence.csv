@@ -1,0 +1,16 @@
+Source,Type,Dim 1,Dim 2,Eigenvalue,Cumulative %
+Scientometrics,Entity,-0.195345,-0.032513,,
+Research Policy,Entity,-0.261593,0.06922,,
+Journal of Informetrics,Entity,0.434586,-0.01359,,
+Journal of the American Society for Information Science and Technology,Entity,0.148901,0.532815,,
+Science,Entity,0.200662,-0.22285,,
+PLoS ONE,Entity,0.79852,-0.093416,,
+Journal of the American Society for Information Science,Entity,-1.003071,-0.017317,,
+Nature,Entity,0.447599,-0.365052,,
+American Sociological Review,Entity,-0.857542,-0.170786,,
+Journal of the Association for Information Science and Technology,Entity,0.996152,0.045558,,
+-2008,Group,-0.485135,-0.003554,,
+2009-2014,Group,0.474402,0.190889,,
+2015-,Group,0.500254,-0.444498,,
+[Inertia Dim 1],Info,84.74,,0.233917,84.74
+[Inertia Dim 2],Info,,15.26,0.042118,100.0
