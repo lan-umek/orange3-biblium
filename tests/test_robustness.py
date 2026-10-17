@@ -82,6 +82,27 @@ def test_stray_and_repeated_separators_are_cleaned(widget):
     assert int(cont.set_index("Author").loc["Doe, A.", "g"]) == 2
 
 
+def test_separator_cleaning_leaves_well_formed_values_untouched(widget):
+    """Guard: cleaning must not alter results on correctly formatted exports.
+
+    The published figures are computed from a well-formed sample, so entity
+    extraction has to be bit-identical there; only malformed fragments may be
+    affected.
+    """
+    df = pd.DataFrame({"Authors": [
+        "Smith, J.; Doe, A.", "Waltman, L.; van Eck, N.J.",
+        "Glanzel, W.", "Leydesdorff, L.; Bornmann, L.; Thelwall, M.",
+        "Jones Jr.; O'Neill, M.",
+    ]})
+    gm = pd.DataFrame({"g": [1] * 5})
+    names = set(_contingency(widget, df, gm)["Author"])
+    assert names == {
+        "Smith, J.", "Doe, A.", "Waltman, L.", "van Eck, N.J.", "Glanzel, W.",
+        "Leydesdorff, L.", "Bornmann, L.", "Thelwall, M.", "Jones Jr.",
+        "O'Neill, M.",
+    }
+
+
 def test_non_string_entity_values_do_not_crash(widget):
     df = pd.DataFrame({"Authors": [123, 45.6, True, "Smith, J."]})
     gm = pd.DataFrame({"g": [1, 1, 1, 1]})

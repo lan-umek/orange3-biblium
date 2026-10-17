@@ -47,6 +47,26 @@ from orangebib import statsafe
 
 logger = logging.getLogger(__name__)
 
+
+def _SEP_CHARS(sep: str) -> str:
+    """Characters stripped from the ends of a split entity.
+
+    Returns the punctuation of the separator plus whitespace, so that a value
+    left as "Doe, A. ;" by a malformed export becomes "Doe, A.".
+    """
+    return (sep.strip() or sep) + " \t"
+
+
+def _split_entities(value: str, sep: str) -> list:
+    """Split a list-valued field, dropping stray and repeated separators."""
+    chars = _SEP_CHARS(sep)
+    out = []
+    for part in str(value).split(sep):
+        part = part.strip().strip(chars).strip()
+        if part and part.lower() != "nan":
+            out.append(part)
+    return out
+
 # ---------------------------------------------------------------------------
 # Optional imports
 # ---------------------------------------------------------------------------
@@ -862,6 +882,8 @@ class OWEntityRelations(OWWidget):
         s = s[(s != "") & (s.str.lower() != "nan")]
         if vtype == "list":
             it = s.str.split(sep).explode().str.strip()
+            # Drop separator characters left behind by malformed exports.
+            it = it.str.strip(_SEP_CHARS(sep)).str.strip()
             return it[(it != "") & (it.str.lower() != "nan")].tolist()
         return s.tolist()
 
@@ -883,13 +905,13 @@ class OWEntityRelations(OWWidget):
 
             # Parse row entities
             if row_vt == "list":
-                r_ents = [e.strip() for e in rv.split(sep) if e.strip() in row_set]
+                r_ents = [e for e in _split_entities(rv, sep) if e in row_set]
             else:
                 r_ents = [rv] if rv in row_set else []
 
             # Parse col entities
             if col_vt == "list":
-                c_ents = [e.strip() for e in cv.split(sep) if e.strip() in col_set]
+                c_ents = [e for e in _split_entities(cv, sep) if e in col_set]
             else:
                 c_ents = [cv] if cv in col_set else []
 
@@ -1878,7 +1900,7 @@ class OWEntityRelations(OWWidget):
             return pd.Series(False, index=df.index)
         if vtype == "list":
             m = df[col].dropna().astype(str).apply(
-                lambda x: name in {s.strip() for s in x.split(sep)})
+                lambda x: name in set(_split_entities(x, sep)))
             return m.reindex(df.index, fill_value=False)
         return df[col].astype(str).str.strip() == name
 

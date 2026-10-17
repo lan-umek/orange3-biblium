@@ -50,6 +50,15 @@ from orangebib import statsafe
 
 logger = logging.getLogger(__name__)
 
+
+def _SEP_CHARS(sep: str) -> str:
+    """Characters stripped from the ends of a split entity.
+
+    Returns the punctuation of the separator plus whitespace, so that a value
+    left as "Doe, A. ;" by a malformed export becomes "Doe, A.".
+    """
+    return (sep.strip() or sep) + " \t"
+
 # ---------------------------------------------------------------------------
 # Optional imports
 # ---------------------------------------------------------------------------
@@ -771,6 +780,12 @@ class OWGroupAssociations(OWWidget):
         s = s[(s != "") & (s.str.lower() != "nan")]
         if vtype == "list":
             it = s.str.split(sep).explode().str.strip()
+            # Malformed exports contain stray or repeated separators
+            # ("; A; ; B ;"), which leave separator characters or empty
+            # fragments behind and would otherwise be counted as entities.
+            # Only leading and trailing separator characters are removed, so
+            # well-formed values are unaffected.
+            it = it.str.strip(_SEP_CHARS(sep)).str.strip()
             return it[(it != "") & (it.str.lower() != "nan")].tolist()
         if vtype == "text" and HAS_SKLEARN:
             try:
