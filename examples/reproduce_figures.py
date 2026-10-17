@@ -113,8 +113,10 @@ def figure2_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
     gm = period_groups(df)
     groups = list(gm.columns)
+    # "string" is the value type the Sources entity is configured with.
     label, col = "Source", resolve(df, "source")
-    cont = w._build_contingency(df, gm, groups, col, label, "categorical", "; ")
+    sep = w._detect_separator(df)
+    cont = w._build_contingency(df, gm, groups, col, label, "string", sep)
     if cont.empty:
         raise SystemExit("Figure 2: empty contingency table")
 
@@ -131,36 +133,44 @@ def figure2_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 def figure3_tables(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     from orangebib.widgets.owentityrelations import OWEntityRelations
 
-    w = _shim(OWEntityRelations)
+    # The widget's own entity selection and co-occurrence construction are
+    # used, so this reproduces what the GUI computes rather than an
+    # independent reimplementation of it.
+    w = _shim(
+        OWEntityRelations,
+        row_min_freq=FIG3_MIN_FREQ, col_min_freq=FIG3_MIN_FREQ,
+        row_top_n=FIG3_TOP_N, col_top_n=FIG3_TOP_N,
+        row_max_items=0, col_max_items=0,
+        row_include_text="", col_include_text="",
+        row_exclude_text="", col_exclude_text="",
+        row_regex_include="", col_regex_include="",
+        row_regex_exclude="", col_regex_exclude="",
+    )
     rows_col = resolve(df, "authors")
     cols_col = resolve(df, "keywords")
+    sep = w._detect_separator(df)
 
-    def top_items(column: str, n: int, min_freq: int) -> list[str]:
-        exploded = (df[column].dropna().astype(str)
-                    .str.split(";").explode().str.strip())
-        exploded = exploded[(exploded != "") & (exploded.str.lower() != "nan")]
-        counts = exploded.value_counts()
-        return counts[counts >= min_freq].head(n).index.tolist()
+    row_items = w._get_filtered_entities(df, rows_col, "list", sep, "row")
+    col_items = w._get_filtered_entities(df, cols_col, "list", sep, "col")
+    if not row_items or not col_items:
+        raise SystemExit("Figure 3: no entities passed the filters")
 
-    row_items = top_items(rows_col, FIG3_TOP_N, FIG3_MIN_FREQ)
-    col_items = top_items(cols_col, FIG3_TOP_N, FIG3_MIN_FREQ)
+    cooc = w._build_cooccurrence(df, rows_col, cols_col, "list", "list",
+                                 row_items, col_items, sep)
+    if cooc.empty:
+        raise SystemExit("Figure 3: empty co-occurrence matrix")
 
-    mat = np.zeros((len(row_items), len(col_items)), dtype=float)
-    r_index = {v: i for i, v in enumerate(row_items)}
-    c_index = {v: j for j, v in enumerate(col_items)}
-    for _, rec in df[[rows_col, cols_col]].dropna().iterrows():
-        rs = {p.strip() for p in str(rec[rows_col]).split(";")}
-        cs = {p.strip() for p in str(rec[cols_col]).split(";")}
-        for r in rs & r_index.keys():
-            for c in cs & c_index.keys():
-                mat[r_index[r], c_index[c]] += 1
-
-    cooc = pd.DataFrame(mat, index=row_items, columns=col_items)
-    cooc.index.name = "Row"
+    # _build_cooccurrence drops rows whose total is zero; keep the labels
+    # aligned with the rows that survived.
+    row_items = cooc["Row"].tolist()
+    mat = cooc[col_items].values.astype(float)
+    print(f"  Figure 3 matrix: {mat.shape[0]} x {mat.shape[1]}, "
+          f"{int(mat.sum())} co-occurrences")
     return {
-        "fig3_cooccurrence": cooc.reset_index(),
+        "fig3_cooccurrence": cooc,
         "fig3_chi_square": w._calc_chi_square(mat, row_items, col_items),
         "fig3_correspondence": w._calc_ca(mat, row_items, col_items),
+        "fig3_associations": w._calc_associations(mat, row_items, col_items),
     }
 
 
