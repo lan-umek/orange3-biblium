@@ -8,6 +8,8 @@ docs/_build/
 .ipynb_checkpoints/
 .DS_Store
 *.qsettings
+pytest_out.txt
+.pytest_cache/
 .idea/
 .vscode/
 
