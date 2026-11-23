@@ -27,6 +27,8 @@ from Orange.widgets import settings
 from Orange.widgets.widget import OWWidget, Output, Msg
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
+from orangebib import sources as bibsources
+
 # Try to import biblium
 HAS_BIBLIUM = False
 BIBLIUM_DIR = None
@@ -149,6 +151,8 @@ class FetchWorker(QThread):
             max_results = self.params["max_results"]
             open_access = self.params.get("open_access", False)
             email = self.params.get("email", "")
+            api_key = bibsources.openalex_key(self.params.get("api_key"))
+            headers = bibsources.openalex_headers(api_key)
             
             self.progress.emit(5, "Building query...")
             
@@ -178,8 +182,13 @@ class FetchWorker(QThread):
                         author_resp = requests.get(
                             "https://api.openalex.org/authors",
                             params={"search": query, "per_page": 5},
-                            timeout=15
+                            headers=headers, timeout=15
                         )
+                        auth_error = bibsources.openalex_auth_error(
+                            author_resp.status_code, bool(api_key))
+                        if auth_error:
+                            self.finished.emit(None, auth_error)
+                            return
                         if author_resp.status_code == 200:
                             author_data = author_resp.json()
                             authors = author_data.get("results", [])
@@ -206,8 +215,13 @@ class FetchWorker(QThread):
                     inst_resp = requests.get(
                         "https://api.openalex.org/institutions",
                         params={"search": query, "per_page": 3},
-                        timeout=15
+                        headers=headers, timeout=15
                     )
+                    auth_error = bibsources.openalex_auth_error(
+                        inst_resp.status_code, bool(api_key))
+                    if auth_error:
+                        self.finished.emit(None, auth_error)
+                        return
                     if inst_resp.status_code == 200:
                         inst_data = inst_resp.json()
                         institutions = inst_data.get("results", [])
@@ -240,10 +254,14 @@ class FetchWorker(QThread):
             base_url = "https://api.openalex.org/works"
             per_page = min(200, max_results)
             
+            # Result ordering: decides which records are returned when fewer
+            # than all matching records are fetched (see orangebib.sources).
+            sort_value = bibsources.sort_value(
+                self.params.get("sort"), self.params.get("sort_secondary"),
+                has_search=bool(search_param))
+            
             params = {
-                "per_page": per_page,
                 "filter": ",".join(filter_parts),
-                "cursor": "*",
             }
             if search_param:
                 params["search"] = search_param
@@ -254,6 +272,7 @@ class FetchWorker(QThread):
             
             records = []
             page = 0
+            cursor = "*"
             max_pages = (max_results // per_page) + 2
             
             while len(records) < max_results and page < max_pages:
@@ -265,8 +284,23 @@ class FetchWorker(QThread):
                 pct = min(85, 10 + int(75 * len(records) / max_results))
                 self.progress.emit(pct, f"Page {page}: {len(records)} records...")
                 
+                # Cursor paging for sorted queries, sample + page for random.
+                for stale in ("sort", "cursor", "sample", "seed", "page", "per_page"):
+                    params.pop(stale, None)
+                params.update(bibsources.page_params(
+                    sort_value, max_results, len(records), cursor, page, per_page))
+                
                 try:
-                    resp = requests.get(base_url, params=params, timeout=30)
+                    resp = requests.get(base_url, params=params,
+                                        headers=headers, timeout=30)
+                    auth_error = bibsources.openalex_auth_error(
+                        resp.status_code, bool(api_key))
+                    if auth_error:
+                        if records:
+                            auth_error += (f" {len(records)} records were "
+                                           "received before the request was refused.")
+                        self.finished.emit(None, auth_error)
+                        return
                     resp.raise_for_status()
                     data = resp.json()
                 except requests.exceptions.Timeout:
@@ -290,9 +324,11 @@ class FetchWorker(QThread):
                         break
                 
                 cursor = data.get("meta", {}).get("next_cursor")
-                if not cursor:
+                if sort_value == "random":
+                    if len(results) < per_page:
+                        break  # last page of the sample
+                elif not cursor:
                     break
-                params["cursor"] = cursor
             
             self.progress.emit(90, f"Creating DataFrame ({len(records)} records)...")
             
@@ -493,14 +529,18 @@ class OWBibliographicData(OWWidget):
     """Load Bibliographic Data with preprocessing options."""
     
     name = "Bibliographic Data"
-    description = "Load bibliometric data from files, OpenAlex API, or SICRIS/COBISS"
+    description = "Load bibliometric data from files (one or several databases combined), OpenAlex API, or SICRIS/COBISS"
     icon = "icons/bibliographic_data.svg"
     priority = 10
-    keywords = ["bibliometric", "scopus", "web of science", "openalex", "sicris", "cobiss"]
+    keywords = ["bibliometric", "scopus", "web of science", "openalex", "sicris", "cobiss",
+                "merge", "combine", "deduplicate"]
     category = "Biblium"
     
     class Outputs:
         data = Output("Data", Table)
+        overlap = Output("Source Overlap", Table,
+                         doc="Records per combination of source databases "
+                             "(only when databases are combined)")
     
     # Settings
     selected_sample = settings.Setting("none")
@@ -523,6 +563,13 @@ class OWBibliographicData(OWWidget):
     api_doc_type = settings.Setting(0)
     api_max_results = settings.Setting(200)
     api_open_access = settings.Setting(False)
+    api_sort = settings.Setting(bibsources.DEFAULT_SORT)
+    api_sort_secondary = settings.Setting("")
+
+    # Combine-databases settings: [[path, database label], ...]
+    merge_sources = settings.Setting([])
+    merge_key = settings.Setting("doi")
+    merge_columns = settings.Setting("union")
 
     # SICRIS / COBISS settings
     sicris_url = settings.Setting("")
@@ -532,6 +579,8 @@ class OWBibliographicData(OWWidget):
     
     class Warning(OWWidget.Warning):
         no_biblium = Msg("Biblium not available")
+        old_biblium = Msg("Biblium {} is installed; combining databases needs "
+                          "biblium>={}. Upgrade with: pip install -U biblium")
     
     class Error(OWWidget.Error):
         load_error = Msg("Load error: {}")
@@ -539,6 +588,7 @@ class OWBibliographicData(OWWidget):
     
     class Information(OWWidget.Information):
         loaded = Msg("Loaded {:,} records with {} columns")
+        combined = Msg("{}")
     
     def __init__(self):
         super().__init__()
@@ -561,6 +611,9 @@ class OWBibliographicData(OWWidget):
         
         if not HAS_BIBLIUM:
             self.Warning.no_biblium()
+        elif not bibsources.biblium_is_current():
+            self.Warning.old_biblium(bibsources.biblium_version() or "?",
+                                     bibsources.MIN_BIBLIUM)
         
         self._load_stopwords()
         self._setup_gui()
@@ -605,6 +658,7 @@ class OWBibliographicData(OWWidget):
         self.controlArea.layout().addWidget(self.tabs)
         
         self._create_load_tab()
+        self._create_merge_tab()
         self._create_api_tab()
         self._create_sicris_tab()
         
@@ -966,10 +1020,39 @@ class OWBibliographicData(OWWidget):
         self.max_spin.valueChanged.connect(lambda v: setattr(self, "api_max_results", v))
         filters_layout.addWidget(self.max_spin, 2, 1)
         
+        # Which records are returned when Max Results is below the number
+        # of matching records.
+        filters_layout.addWidget(QLabel("Order by:"), 3, 0)
+        self.sort_combo = QComboBox()
+        for key in bibsources.sort_keys():
+            self.sort_combo.addItem(bibsources.sort_label(key), key)
+        idx = self.sort_combo.findData(self.api_sort)
+        self.sort_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.sort_combo.setToolTip(
+            "Decides which records are fetched when there are more matching "
+            "records than Max Results.\nRelevance needs a keyword query; "
+            "without one the most cited records are returned.\n"
+            "Random sample is seeded, so repeating the query returns the same sample.")
+        self.sort_combo.currentIndexChanged.connect(self._on_sort_changed)
+        filters_layout.addWidget(self.sort_combo, 3, 1)
+        
+        filters_layout.addWidget(QLabel("Then by:"), 4, 0)
+        self.sort2_combo = QComboBox()
+        self.sort2_combo.addItem(bibsources.NO_SECONDARY, "")
+        for key in bibsources.secondary_keys():
+            self.sort2_combo.addItem(bibsources.sort_label(key), key)
+        idx = self.sort2_combo.findData(self.api_sort_secondary)
+        self.sort2_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.sort2_combo.setToolTip("Optional second criterion that orders records "
+                                    "with equal values of the first one.")
+        self.sort2_combo.currentIndexChanged.connect(self._on_sort_changed)
+        filters_layout.addWidget(self.sort2_combo, 4, 1)
+        self._on_sort_changed()
+        
         self.oa_check = QCheckBox("Open Access only")
         self.oa_check.setChecked(self.api_open_access)
         self.oa_check.toggled.connect(lambda c: setattr(self, "api_open_access", c))
-        filters_layout.addWidget(self.oa_check, 3, 0, 1, 2)
+        filters_layout.addWidget(self.oa_check, 5, 0, 1, 2)
         
         layout.addWidget(filters_group)
         
@@ -978,10 +1061,28 @@ class OWBibliographicData(OWWidget):
         email_row.addWidget(QLabel("Email:"))
         self.email_edit = QLineEdit()
         self.email_edit.setText(self.api_email)
-        self.email_edit.setPlaceholderText("your@email.com (for polite pool)")
+        self.email_edit.setPlaceholderText("your@email.com (optional)")
         self.email_edit.textChanged.connect(lambda t: setattr(self, "api_email", t))
         email_row.addWidget(self.email_edit)
         layout.addLayout(email_row)
+        
+        # OpenAlex API key: kept in the system credential store, never in the
+        # widget settings, so it is not written into saved workflows.
+        key_row = QHBoxLayout()
+        key_row.addWidget(QLabel("OpenAlex API key:"))
+        self.api_key_edit = QLineEdit()
+        self.api_key_edit.setEchoMode(
+            getattr(QLineEdit, "EchoMode", QLineEdit).Password)  # PyQt5 and PyQt6
+        self.api_key_edit.setText(bibsources.stored_openalex_key())
+        self.api_key_edit.setPlaceholderText("required by OpenAlex; free at openalex.org")
+        self.api_key_edit.setToolTip(
+            bibsources.OPENALEX_KEY_HINT + "\nThe key is stored in the system "
+            "credential store, not in the workflow file. The environment "
+            f"variable {bibsources.OPENALEX_KEY_ENV} is used when the field is empty.")
+        self.api_key_edit.editingFinished.connect(
+            lambda: bibsources.store_openalex_key(self.api_key_edit.text()))
+        key_row.addWidget(self.api_key_edit)
+        layout.addLayout(key_row)
         
         layout.addWidget(self._create_preprocessing_group())
         layout.addWidget(self._create_keyword_processing_group())
@@ -999,9 +1100,211 @@ class OWBibliographicData(OWWidget):
         layout.addStretch()
         self.tabs.addTab(tab, "🌐 API")
     
+    # ------------------------------------------------------------------
+    # Combine exports from several databases (biblium.merge, Biblium 2.19.1)
+    # ------------------------------------------------------------------
+    N_MERGE_ROWS = 6
+    
+    def _create_merge_tab(self):
+        """Create the Combine Databases tab."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
+        layout.setContentsMargins(8, 8, 8, 8)
+        
+        info = QLabel(
+            "Combine exports of the <b>same search from several databases</b> "
+            "into one de-duplicated dataset. Choose a file and its database "
+            "in two or more rows.")
+        info.setWordWrap(True)
+        layout.addWidget(info)
+        
+        # Stored settings -> exactly N_MERGE_ROWS [path, database] pairs.
+        labels = list(bibsources.MERGE_DATABASES)
+        rows = []
+        for item in list(self.merge_sources or [])[:self.N_MERGE_ROWS]:
+            try:
+                path, label = str(item[0] or ""), str(item[1] or "")
+            except (TypeError, IndexError):
+                path, label = "", ""
+            rows.append([path, label if label in labels else ""])
+        while len(rows) < self.N_MERGE_ROWS:
+            rows.append(["", labels[len(rows) % len(labels)]])
+        self.merge_sources = rows
+        
+        src_group = QGroupBox("Sources")
+        grid = QGridLayout(src_group)
+        self._merge_db_combos = []
+        self._merge_file_edits = []
+        for i, (path, label) in enumerate(rows):
+            combo = QComboBox()
+            combo.addItems(labels)
+            if label in labels:
+                combo.setCurrentText(label)
+            else:
+                self.merge_sources[i][1] = combo.currentText()
+            combo.currentTextChanged.connect(
+                lambda text, i=i: self._on_merge_db_changed(i, text))
+            grid.addWidget(combo, i, 0)
+            self._merge_db_combos.append(combo)
+            
+            edit = QLineEdit()
+            edit.setReadOnly(True)
+            edit.setPlaceholderText("No file selected...")
+            edit.setText(path)
+            edit.setToolTip(path)
+            grid.addWidget(edit, i, 1)
+            self._merge_file_edits.append(edit)
+            
+            browse = QPushButton("Browse...")
+            browse.clicked.connect(lambda _=False, i=i: self._browse_merge_file(i))
+            grid.addWidget(browse, i, 2)
+            
+            clear = QPushButton("✕")
+            clear.setFixedWidth(28)
+            clear.setToolTip("Remove this source")
+            clear.clicked.connect(lambda _=False, i=i: self._set_merge_file(i, ""))
+            grid.addWidget(clear, i, 3)
+        grid.setColumnStretch(1, 1)
+        layout.addWidget(src_group)
+        
+        opt_group = QGroupBox("Matching")
+        opt = QGridLayout(opt_group)
+        opt.addWidget(QLabel("Match records by:"), 0, 0)
+        self.merge_key_combo = QComboBox()
+        for label, key in bibsources.MATCH_KEYS.items():
+            self.merge_key_combo.addItem(label, key)
+        idx = self.merge_key_combo.findData(self.merge_key)
+        self.merge_key_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.merge_key_combo.setToolTip(
+            "Records with the same key are treated as one document and merged.\n"
+            "With DOI alone, records without a DOI are never matched.")
+        self.merge_key_combo.currentIndexChanged.connect(
+            lambda _: setattr(self, "merge_key",
+                              self.merge_key_combo.currentData() or "doi"))
+        opt.addWidget(self.merge_key_combo, 0, 1)
+        
+        opt.addWidget(QLabel("Keep:"), 1, 0)
+        self.merge_cols_combo = QComboBox()
+        for label, key in bibsources.COLUMN_POLICIES.items():
+            self.merge_cols_combo.addItem(label, key)
+        idx = self.merge_cols_combo.findData(self.merge_columns)
+        self.merge_cols_combo.setCurrentIndex(idx if idx >= 0 else 0)
+        self.merge_cols_combo.setToolTip(
+            "Union keeps every column of every source; cells are empty where "
+            "a database does not provide the field.\nIntersection keeps only "
+            "the columns present in all sources.")
+        self.merge_cols_combo.currentIndexChanged.connect(
+            lambda _: setattr(self, "merge_columns",
+                              self.merge_cols_combo.currentData() or "union"))
+        opt.addWidget(self.merge_cols_combo, 1, 1)
+        opt.setColumnStretch(1, 1)
+        layout.addWidget(opt_group)
+        
+        layout.addWidget(self._create_preprocessing_group())
+        layout.addWidget(self._create_keyword_processing_group())
+        
+        self.merge_btn = QPushButton("🔗 Combine Databases")
+        self.merge_btn.setMinimumHeight(40)
+        self.merge_btn.setStyleSheet("font-weight: bold;")
+        self.merge_btn.clicked.connect(self._combine_data)
+        self.merge_btn.setEnabled(HAS_BIBLIUM)
+        if not HAS_BIBLIUM:
+            self.merge_btn.setToolTip(
+                f"Install biblium>={bibsources.MIN_BIBLIUM}")
+        layout.addWidget(self.merge_btn)
+        
+        layout.addStretch()
+        self.tabs.addTab(tab, "🔗 Combine")
+    
+    def _on_merge_db_changed(self, row, text):
+        self.merge_sources[row][1] = text
+    
+    def _set_merge_file(self, row, path):
+        self.merge_sources[row][0] = path
+        self._merge_file_edits[row].setText(path)
+        self._merge_file_edits[row].setToolTip(path)
+    
+    def _browse_merge_file(self, row):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Open File", "",
+            "All Supported (*.csv *.xlsx *.xls *.txt *.bib *.ris *.nbib *.json);;All (*)"
+        )
+        if not path:
+            return
+        self._set_merge_file(row, path)
+        guess = bibsources.guess_database(path)
+        if guess:
+            self._merge_db_combos[row].setCurrentText(guess)
+    
+    def _combine_data(self):
+        """Combine the selected exports into one de-duplicated dataset."""
+        self.Error.clear()
+        self.Information.clear()
+        
+        if self.user_stopwords_file:
+            self._load_user_stopwords()
+        
+        chosen = [(path, label) for path, label in self.merge_sources if path]
+        if len(chosen) < 2:
+            self.Error.load_error("Select at least two files to combine")
+            return
+        missing = [path for path, _ in chosen if not os.path.exists(path)]
+        if missing:
+            self.Error.load_error(f"File not found: {missing[0]}")
+            return
+        
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setValue(10)
+        self.status_label.setText("Combining...")
+        self.merge_btn.setEnabled(False)
+        QApplication.processEvents()
+        
+        try:
+            merged, report = bibsources.combine_sources(
+                chosen, key=self.merge_key, columns=self.merge_columns)
+            self.progress_bar.setValue(60)
+            
+            # Same preprocessing as for a single file. The merged frame uses
+            # Scopus-like column names and the "; " separator.
+            df = merged
+            try:
+                bib = BiblioAnalysis(df=merged, db="scopus", res_folder=None)
+                df = self._biblium_preprocess(bib)
+            except Exception as e:  # noqa: BLE001
+                logger.warning(f"Biblium preprocessing of merged data failed: {e}")
+            
+            self.progress_bar.setValue(80)
+            df = self._apply_text_processing(df)
+            
+            self._data = df
+            self._send_output()
+            try:
+                self.Outputs.overlap.send(self._df_to_table(report["overlap"]))
+            except Exception:  # noqa: BLE001
+                self.Outputs.overlap.send(None)
+            
+            self.progress_bar.setValue(100)
+            summary = bibsources.merge_summary(report)
+            self.Information.combined(summary)
+            self.status_label.setText(f"✓ {summary}")
+        
+        except Exception as e:  # noqa: BLE001
+            self.Error.load_error(str(e))
+            self.status_label.setText(f"Error: {e}")
+        
+        finally:
+            self.progress_bar.setVisible(False)
+            self.merge_btn.setEnabled(HAS_BIBLIUM)
+    
     def _on_search_by_changed(self, idx):
         self.api_search_by = idx
         self._update_query_hint()
+    
+    def _on_sort_changed(self, *_):
+        self.api_sort = self.sort_combo.currentData() or bibsources.DEFAULT_SORT
+        # A tie-breaker has no meaning for a random sample.
+        self.sort2_combo.setEnabled(self.api_sort != "random")
+        self.api_sort_secondary = self.sort2_combo.currentData() or ""
     
     def _update_query_hint(self):
         st = self.search_by_combo.currentText()
@@ -1183,19 +1486,7 @@ class OWBibliographicData(OWWidget):
             if HAS_BIBLIUM:
                 try:
                     bib = BiblioAnalysis(filepath, db=db or "")
-                    df = bib.df
-                    if self.preprocess_level >= 1:
-                        try:
-                            bib.add_countries()
-                            bib.add_labels()
-                        except:
-                            pass
-                    if self.preprocess_level >= 2 and self.use_stopwords:
-                        try:
-                            bib.apply_stopwords()
-                        except:
-                            pass
-                    df = bib.df
+                    df = self._biblium_preprocess(bib)
                 except Exception as e:
                     logger.warning(f"Biblium failed: {e}")
             
@@ -1214,6 +1505,7 @@ class OWBibliographicData(OWWidget):
             self.progress_bar.setValue(90)
             self._data = df
             self._send_output()
+            self.Outputs.overlap.send(None)
             
             self.progress_bar.setValue(100)
             self.Information.loaded(len(df), len(df.columns))
@@ -1226,6 +1518,23 @@ class OWBibliographicData(OWWidget):
         finally:
             self.progress_bar.setVisible(False)
             self.load_btn.setEnabled(True)
+    
+    def _biblium_preprocess(self, bib):
+        """Optional Biblium preprocessing steps, shared by single-file and
+        combined loading. Steps the installed Biblium does not provide are
+        skipped."""
+        if self.preprocess_level >= 1:
+            try:
+                bib.add_countries()
+                bib.add_labels()
+            except Exception:  # noqa: BLE001
+                pass
+        if self.preprocess_level >= 2 and self.use_stopwords:
+            try:
+                bib.apply_stopwords()
+            except Exception:  # noqa: BLE001
+                pass
+        return bib.df
     
     def _extract_countries_from_affiliations(self, df):
         """Extract countries from affiliations column (like biblium does).
@@ -1450,6 +1759,9 @@ class OWBibliographicData(OWWidget):
             "max_results": self.api_max_results,
             "open_access": self.api_open_access,
             "email": self.api_email,
+            "api_key": self.api_key_edit.text(),
+            "sort": self.api_sort,
+            "sort_secondary": self.api_sort_secondary,
         }
         
         self._worker = FetchWorker(params)
@@ -1484,6 +1796,7 @@ class OWBibliographicData(OWWidget):
         n_rows, n_cols = result.shape
         
         self._send_output()
+        self.Outputs.overlap.send(None)
         self.Information.loaded(n_rows, n_cols)
         self.status_label.setText(f"✓ Loaded {n_rows:,} records with {n_cols} columns")
     

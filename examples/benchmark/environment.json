@@ -1,0 +1,17 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 181 Stepping 0, GenuineIntel",
+  "cpu_count": 14,
+  "python": "3.12.10",
+  "date_utc": "2026-11-22 23:15",
+  "ram_gb": 31.5,
+  "cpu_physical": 12,
+  "Orange": "3.40.0",
+  "biblium": "2.19.1",
+  "orangebib": "0.4.0",
+  "numpy": "2.3.5",
+  "pandas": "2.3.3",
+  "scipy": "1.18.1",
+  "sklearn": "1.9.1",
+  "networkx": "3.7"
+}

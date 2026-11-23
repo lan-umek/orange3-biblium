@@ -22,7 +22,7 @@ Biblium library and installed automatically with this add-on.
 1. Install the exact archived version:
 
    ```bash
-   pip install Orange3-Biblium==0.3.0
+   pip install Orange3-Biblium==0.4.0
    ```
 
    or, inside Orange, *Options ▸ Add-ons ▸ Orange3-Biblium*.
@@ -45,6 +45,9 @@ python examples/reproduce_figures.py
 The script loads the same dataset, applies the same parameters, calls the same
 computational methods the widgets use, and compares every resulting table with
 the stored references in `expected/`, cell by cell (absolute tolerance 1e-6).
+Tables are compared as sets of rows, because rows with equal sort values may
+come out in either order depending on the installed pandas/NumPy; permutation
+p-values are Monte Carlo estimates and must agree within four standard errors.
 It exits with status 0 only when all tables match, so it doubles as a
 reproducibility check in continuous integration.
 
@@ -78,3 +81,19 @@ The reference outputs were produced with the versions recorded in
 `expected/environment.txt`. Results are deterministic across platforms except
 for the permutation p-values in the Group Associations widget, which use a
 fixed seed (42) and are therefore also reproducible.
+
+## Performance and scalability benchmark
+
+`benchmark_scalability.py` measures run time and peak memory of the operations
+the widgets perform, on corpora of 613 to 50,000 records built by resampling
+the bundled OpenAlex sample. The results reported in the paper are in
+`benchmark/` (`results.csv`, summary tables, `environment.json`).
+
+```bash
+python examples/benchmark_scalability.py            # local operations
+python examples/benchmark_scalability.py --online   # also the OpenAlex download
+```
+
+The online part needs an OpenAlex API key in the `OPENALEX_API_KEY`
+environment variable. Timings depend on the computer and on what else it is
+doing; run the benchmark on an otherwise idle machine.

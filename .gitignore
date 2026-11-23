@@ -9,6 +9,10 @@ docs/_build/
 .DS_Store
 *.qsettings
 pytest_out.txt
+benchmark_out.txt
+reproduce_out.txt
+sphinx_out.txt
+examples/_computed/
 .pytest_cache/
 .idea/
 .vscode/

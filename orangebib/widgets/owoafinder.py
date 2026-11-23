@@ -26,6 +26,8 @@ from Orange.widgets import gui, settings
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
+from orangebib import sources as bibsources
+
 try:
     import requests
     HAS_REQUESTS = True
@@ -77,7 +79,8 @@ class OAWorker(QThread):
     progress = pyqtSignal(int, str)
     finished = pyqtSignal(object, str)
 
-    def __init__(self, df, doi_col, title_col, email):
+    def __init__(self, df, doi_col, title_col, email, api_key=""):
+        self._api_key = api_key
         super().__init__()
         self._df = df; self._doi = doi_col; self._title = title_col
         self._email = email; self._stop = False
@@ -99,6 +102,7 @@ class OAWorker(QThread):
             n = len(dois)
             batch = 50
             done = 0
+            key = bibsources.openalex_key(self._api_key)
             for i in range(0, n, batch):
                 if self._stop:
                     self.finished.emit(pd.DataFrame(rows), "Cancelled"); return
@@ -109,8 +113,14 @@ class OAWorker(QThread):
                 if self._email:
                     params["mailto"] = self._email
                 try:
-                    resp = session.get("https://api.openalex.org/works",
-                                       params=params, timeout=30)
+                    resp = session.get(
+                        "https://api.openalex.org/works", params=params,
+                        headers=bibsources.openalex_headers(key), timeout=30)
+                    auth_error = bibsources.openalex_auth_error(
+                        resp.status_code, bool(key))
+                    if auth_error:
+                        self.finished.emit(pd.DataFrame(rows), auth_error)
+                        return
                     works = resp.json().get("results", []) if resp.status_code == 200 else []
                 except Exception:  # noqa: BLE001
                     works = []
@@ -186,11 +196,23 @@ class OWOAFinder(OWWidget):
         self.doi_combo = QComboBox()
         self.doi_combo.currentTextChanged.connect(lambda t: setattr(self, "doi_col", t))
         grid.addWidget(self.doi_combo, 0, 1)
-        grid.addWidget(QLabel("Email (polite pool):"), 1, 0)
+        grid.addWidget(QLabel("Email (optional):"), 1, 0)
         self.email_edit = QLineEdit(self.email)
         self.email_edit.setPlaceholderText("you@university.edu")
         self.email_edit.textChanged.connect(lambda t: setattr(self, "email", t))
         grid.addWidget(self.email_edit, 1, 1)
+
+        # Kept in the system credential store, not in the workflow file.
+        grid.addWidget(QLabel("OpenAlex API key:"), 2, 0)
+        self.api_key_edit = QLineEdit()
+        self.api_key_edit.setEchoMode(
+            getattr(QLineEdit, "EchoMode", QLineEdit).Password)  # PyQt5 and PyQt6
+        self.api_key_edit.setText(bibsources.stored_openalex_key())
+        self.api_key_edit.setPlaceholderText("required by OpenAlex; free at openalex.org")
+        self.api_key_edit.setToolTip(bibsources.OPENALEX_KEY_HINT)
+        self.api_key_edit.editingFinished.connect(
+            lambda: bibsources.store_openalex_key(self.api_key_edit.text()))
+        grid.addWidget(self.api_key_edit, 2, 1)
         box.layout().addLayout(grid)
 
         self.run_btn = QPushButton("Find PDFs")
@@ -258,7 +280,8 @@ class OWOAFinder(OWWidget):
         self.run_btn.setEnabled(False); self.cancel_btn.setEnabled(True)
         self.progress_bar.setVisible(True); self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(0); self.status_label.setText("Starting...")
-        self._worker = OAWorker(self._df, doi, self._title_col(), self.email)
+        self._worker = OAWorker(self._df, doi, self._title_col(), self.email,
+                                api_key=self.api_key_edit.text())
         self._worker.progress.connect(self._on_progress, Qt.QueuedConnection)
         self._worker.finished.connect(self._on_finished, Qt.QueuedConnection)
         self._worker.start()

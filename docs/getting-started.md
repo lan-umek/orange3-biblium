@@ -5,13 +5,14 @@ A typical workflow follows the order of the widget toolbox.
 ## 1. Load data
 
 Place a **Bibliographic Data** widget and either open a database export
-(Scopus, Web of Science, OpenAlex, …) or query the OpenAlex API. Sample
-datasets are included for learning.
+(Scopus, Web of Science, OpenAlex, …), combine exports from several databases
+into one de-duplicated dataset, or query the OpenAlex API. Sample datasets are
+included for learning.
 
 ## 2. Prepare
 
 - **OpenAlex Enrichment** — add citations, open-access status, topics, SDGs and references by DOI.
-- **Deduplicate & Merge** — combine Scopus + WoS + OpenAlex and remove duplicates.
+- **Deduplicate & Merge** — combine tables already on the canvas and remove duplicates.
 - **Filter** / **Text Preprocessing** — subset records and clean keywords/abstracts.
 - **Setup Groups** — define groups for later comparison.
 

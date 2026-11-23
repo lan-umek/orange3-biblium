@@ -33,6 +33,8 @@ from Orange.widgets import gui, settings
 from Orange.widgets.widget import OWWidget, Input, Output, Msg
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 
+from orangebib import sources as bibsources
+
 try:
     from biblium.openalex_api import OpenAlexClient
     HAS_BIBLIUM = True
@@ -182,6 +184,10 @@ def _oa_request(session, email, endpoint, params, timeout=30, max_retries=5,
             raise RuntimeError(f"Network error: {type(exc).__name__}: {exc}")
         if r.status_code == 200:
             return r.json()
+        auth_error = bibsources.openalex_auth_error(
+            r.status_code, "Authorization" in getattr(session, "headers", {}))
+        if auth_error:
+            raise RuntimeError(auth_error)
         if r.status_code == 429:
             if attempt >= max_retries:
                 raise RuntimeError(
@@ -206,7 +212,9 @@ class EnrichWorker(QThread):
     progress = pyqtSignal(int, str)
     finished = pyqtSignal(object, str)  # DataFrame, error
 
-    def __init__(self, df, doi_column, email, fields, batch_size, delay, cache_dir):
+    def __init__(self, df, doi_column, email, fields, batch_size, delay, cache_dir,
+                 api_key=""):
+        self._api_key = api_key
         super().__init__()
         self._df = df
         self._doi_column = doi_column
@@ -223,6 +231,9 @@ class EnrichWorker(QThread):
     def run(self):
         try:
             client = OpenAlexClient(email=self._email or None)
+            # OpenAlex requires an API key; sent as a header on every call.
+            client.session.headers.update(
+                bibsources.openalex_headers(bibsources.openalex_key(self._api_key)))
             # Route every OpenAlex call through a bounded-retry wrapper so a
             # 429 can't trigger biblium's infinite 1s-retry loop.
             def _patched(endpoint, params=None, timeout=30):
@@ -303,7 +314,7 @@ class OWOpenAlexEnrichment(OWWidget):
 
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
-        no_biblium = Msg("Biblium is required. Install biblium>=2.16.")
+        no_biblium = Msg("Biblium is required. Install biblium>=2.19.1.")
         no_doi = Msg("Select the DOI column")
         enrich_error = Msg("Enrichment failed: {}")
 
@@ -337,11 +348,23 @@ class OWOpenAlexEnrichment(OWWidget):
             lambda t: setattr(self, "doi_column", t))
         grid.addWidget(self.doi_combo, 0, 1)
 
-        grid.addWidget(QLabel("Email (polite pool):"), 1, 0)
+        grid.addWidget(QLabel("Email (optional):"), 1, 0)
         self.email_edit = QLineEdit(self.email)
         self.email_edit.setPlaceholderText("you@university.edu")
         self.email_edit.textChanged.connect(lambda t: setattr(self, "email", t))
         grid.addWidget(self.email_edit, 1, 1)
+
+        # Kept in the system credential store, not in the workflow file.
+        grid.addWidget(QLabel("OpenAlex API key:"), 2, 0)
+        self.api_key_edit = QLineEdit()
+        self.api_key_edit.setEchoMode(
+            getattr(QLineEdit, "EchoMode", QLineEdit).Password)  # PyQt5 and PyQt6
+        self.api_key_edit.setText(bibsources.stored_openalex_key())
+        self.api_key_edit.setPlaceholderText("required by OpenAlex; free at openalex.org")
+        self.api_key_edit.setToolTip(bibsources.OPENALEX_KEY_HINT)
+        self.api_key_edit.editingFinished.connect(
+            lambda: bibsources.store_openalex_key(self.api_key_edit.text()))
+        grid.addWidget(self.api_key_edit, 2, 1)
         src.layout().addLayout(grid)
 
         opt = gui.widgetBox(self.controlArea, "Options")
@@ -509,7 +532,8 @@ class OWOpenAlexEnrichment(OWWidget):
 
         self._worker = EnrichWorker(
             self._df, doi_col, self.email, fields_arg,
-            self.batch_size, self.delay, cache_dir)
+            self.batch_size, self.delay, cache_dir,
+            api_key=self.api_key_edit.text())
         self._worker.progress.connect(self._on_progress, Qt.QueuedConnection)
         self._worker.finished.connect(self._on_finished, Qt.QueuedConnection)
         self._worker.start()

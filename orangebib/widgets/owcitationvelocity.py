@@ -160,7 +160,7 @@ class OWCitationVelocity(OWWidget):
 
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
-        no_biblium = Msg("Biblium is required. Install biblium>=2.16.")
+        no_biblium = Msg("Biblium is required. Install biblium>=2.19.1.")
         compute_error = Msg("Computation error: {}")
 
     class Information(OWWidget.Information):

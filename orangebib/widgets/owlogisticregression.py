@@ -36,12 +36,18 @@ except Exception:  # noqa: BLE001
     HAS_SM = False
     sm = None
 
+# The Firth estimator lives in biblium.utilsbib since Biblium 2.18; older
+# releases shipped it as biblium.utilsbib_modules.firth.
 try:
-    from biblium.utilsbib_modules.firth import firth_logit
+    from biblium.utilsbib import firth_logit
     HAS_FIRTH = True
 except Exception:  # noqa: BLE001
-    HAS_FIRTH = False
-    firth_logit = None
+    try:
+        from biblium.utilsbib_modules.firth import firth_logit
+        HAS_FIRTH = True
+    except Exception:  # noqa: BLE001
+        HAS_FIRTH = False
+        firth_logit = None
 
 logger = logging.getLogger(__name__)
 

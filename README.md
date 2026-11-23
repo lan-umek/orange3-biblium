@@ -8,14 +8,14 @@ counts, statistics, citation and network analysis, SDG and methodology
 classification, to interactive reports and an HTML dashboard. It wraps the
 [Biblium](https://github.com/lan-umek/biblium) analysis engine.
 
-> Status: research software, **0.2.0** (beta).
+> Status: research software, **0.4.0** (beta). Requires `biblium` ≥ 2.19.1 and Python ≥ 3.10.
 
 ## Highlights
 
 - **81 widgets** covering the full bibliometric pipeline.
 - Load **Scopus, Web of Science, OpenAlex, PubMed, Dimensions, Lens, SICRIS/COBISS** and 30+ export formats.
-- Query the **OpenAlex API** directly; enrich by DOI (citations, OA status, topics, SDGs, references).
-- **Deduplicate & merge** multi-database exports.
+- Query the **OpenAlex API** directly, choosing which records are returned (most cited, newest, oldest, relevance, random sample); enrich by DOI (citations, OA status, topics, SDGs, references).
+- **Combine exports from several databases** into one de-duplicated dataset (matching by DOI and/or title, union or intersection of columns); deduplicate and merge tables on the canvas.
 - Co-occurrence, citation, co-citation, coupling, collaboration and **field networks** (Jaccard, disparity backbone, bridging), with a VOSviewer-style density view.
 - Topic modeling, thematic maps/evolution, methodology & SDG classification.
 - Group comparison, permutation inference, (Firth) logistic regression.
@@ -33,7 +33,7 @@ In Orange: **Options ▸ Add-ons ▸ Add more…** and install *Orange3-Biblium*
 pip install Orange3-Biblium
 ```
 
-This pulls in `biblium` (the analysis engine) automatically.
+This installs `biblium` (the analysis engine) automatically, or upgrades it to 2.19.1 or newer.
 
 ### From source (development)
 
@@ -48,7 +48,7 @@ To register the widgets inside an existing Orange install, run the above with
 
 ## Quick start
 
-1. Drop a **Bibliographic Data** widget and load a Scopus/WoS/OpenAlex export (or query OpenAlex).
+1. Drop a **Bibliographic Data** widget and load a Scopus/WoS/OpenAlex export, combine several exports, or query OpenAlex.
 2. Optionally **OpenAlex Enrichment** and **Deduplicate & Merge**.
 3. Explore: **Main Information**, **Bibliometric Statistics → Performance Plot**, **Network Co-occurrence → Plot Bibliometric Network**, …
 4. Summarise with the **Report Generator** or **HTML Dashboard**.

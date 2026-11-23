@@ -9,8 +9,8 @@ Bibliometric analysis add-on for Orange data mining suite.
 from setuptools import setup, find_packages
 
 NAME = "Orange3-Biblium"
-VERSION = "0.3.0"
-DESCRIPTION = "Bibliometric analysis widgets for Orange (powered by Biblium 2.16+)"
+VERSION = "0.4.0"
+DESCRIPTION = "Bibliometric analysis widgets for Orange (powered by Biblium 2.19+)"
 LONG_DESCRIPTION = """
 Orange3-Biblium (OrangeBib) provides widgets for bibliometric and scientometric
 analysis of academic literature. It integrates the Biblium library with Orange
@@ -27,7 +27,8 @@ Supports data from major bibliographic databases:
 
 Features:
 - Load data from multiple bibliographic database export formats
-- Query OpenAlex API directly from Orange
+- Combine exports from several databases into one de-duplicated dataset
+- Query OpenAlex API directly from Orange, with a choice of result ordering
 - Predefined sample datasets for learning and testing
 - Seamless integration with Orange's data analysis pipeline
 - Built-in widget help ("?" button) shipped with the add-on
@@ -54,10 +55,10 @@ CLASSIFIERS = [
     "Environment :: X11 Applications :: Qt",
     "Environment :: Plugins",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -87,12 +88,14 @@ INSTALL_REQUIRES = [
     "pandas>=1.5.0",
     "numpy>=1.21.0",
     "requests>=2.28.0",
-    "biblium>=2.16.1",  # Core analysis engine (required by most widgets)
+    # Core analysis engine (required by most widgets). 2.19.1 is the first
+    # release with biblium.merge and the OpenAlex result-ordering helpers.
+    "biblium>=2.19.1",
 ]
 
 EXTRAS_REQUIRE = {
     "full": [
-        "biblium>=2.16.1",
+        "biblium>=2.19.1",
     ],
 }
 
@@ -129,6 +132,6 @@ if __name__ == "__main__":
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
         entry_points=ENTRY_POINTS,
-        python_requires=">=3.9",
+        python_requires=">=3.10",
         zip_safe=False,
     )

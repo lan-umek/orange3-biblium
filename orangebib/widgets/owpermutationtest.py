@@ -13,8 +13,8 @@ e.g. thematic clusters defined by keywords) or the entity is multi-valued
 independence is biased: independence-of-observations is violated, marginals
 are inflated, and asymptotic p-values become anti-conservative.
 
-This widget runs the row-permutation framework from
-``biblium.utilsbib_modules.permutation``:
+This widget runs the row-permutation framework of Biblium
+(``biblium.utilsbib.assoc_permutation_test``):
 
 1. Hold the document × entity indicator matrix fixed.
 2. Permute the document × group indicator matrix row-wise B times.
@@ -606,21 +606,25 @@ class OWPermutationTest(BaseBibliumWidget):
         utilsbib = get_biblium_submodule("utilsbib")
         if not self.has_biblium or utilsbib is None:
             self.Error.compute_error(
-                "biblium >= 2.16 is required for permutation tests. "
-                "Install it with: pip install biblium>=2.16"
+                "biblium >= 2.19.1 is required for permutation tests. "
+                "Install it with: pip install biblium>=2.19.1"
             )
             self._send_outputs()
             return
 
-        try:
-            # Lazy import the permutation module
-            from biblium.utilsbib_modules import permutation as perm_mod
-        except Exception as exc:  # noqa: BLE001
-            self.Error.compute_error(
-                f"biblium.utilsbib_modules.permutation unavailable: {exc}"
-            )
-            self._send_outputs()
-            return
+        # The permutation API lives in biblium.utilsbib since Biblium 2.18;
+        # older releases shipped it as biblium.utilsbib_modules.permutation.
+        if hasattr(utilsbib, "assoc_permutation_test"):
+            perm_mod = utilsbib
+        else:
+            try:
+                from biblium.utilsbib_modules import permutation as perm_mod
+            except Exception as exc:  # noqa: BLE001
+                self.Error.compute_error(
+                    f"biblium permutation tests unavailable: {exc}"
+                )
+                self._send_outputs()
+                return
 
         test_label, test_name, alternative = TEST_OPTIONS[self.test_index]
         mt_label, mt_name = MULTIPLE_TESTING_OPTIONS[

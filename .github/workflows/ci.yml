@@ -4,6 +4,11 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  # Weekly run against the newest Orange and Biblium releases, so that a
+  # breaking upstream change is noticed before users report it.
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
 
 jobs:
   test:

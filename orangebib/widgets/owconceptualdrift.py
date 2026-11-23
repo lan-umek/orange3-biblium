@@ -120,7 +120,7 @@ class OWConceptualDrift(OWWidget):
 
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
-        no_biblium = Msg("Biblium addons are required (biblium>=2.16).")
+        no_biblium = Msg("Biblium addons are required (biblium>=2.19.1).")
         no_terms = Msg("Enter one or more target terms")
         compute_error = Msg("{}")
 

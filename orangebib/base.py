@@ -11,7 +11,7 @@ Provides:
   the import cost at module load time)
 - COLUMN_PATTERNS: canonical column name lookups shared across widgets
 
-Compatible with Biblium 2.16+ API (utilsbib, bibstats, bibgroup, ...).
+Compatible with Biblium 2.19+ API (utilsbib, bibstats, bibgroup, ...).
 """
 
 from __future__ import annotations
@@ -48,7 +48,7 @@ def get_biblium():
     """Return the imported `biblium` module or None.
 
     Imports lazily on first call. Subsequent calls are O(1).
-    Compatible with biblium 2.16's lazy-loaded submodule structure.
+    Compatible with biblium's lazy-loaded submodule structure.
     """
     global _BIBLIUM, _BIBLIUM_TRIED, _HAS_BIBLIUM
     if not _BIBLIUM_TRIED:
@@ -300,7 +300,7 @@ class BaseBibliumWidget(OWWidget):
     class Warning(OWWidget.Warning):
         no_biblium = Msg(
             "Biblium not installed — using fallback implementation. "
-            "Install biblium>=2.16 for full functionality."
+            "Install biblium>=2.19.1 for full functionality."
         )
         missing_columns = Msg("Required column(s) not found: {}")
 

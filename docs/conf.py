@@ -3,7 +3,7 @@
 project = "Orange3-Biblium"
 author = "Lan Umek"
 copyright = "2026, Lan Umek"
-release = "0.2.1"
+release = "0.4.0"
 
 extensions = ["myst_parser", "sphinx.ext.autosectionlabel"]
 myst_enable_extensions = ["colon_fence", "deflist"]

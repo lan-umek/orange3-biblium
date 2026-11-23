@@ -15,6 +15,7 @@ publish interactive reports — all without writing code.
 
 installation
 getting-started
+user-guide
 widgets/index
 ```
 

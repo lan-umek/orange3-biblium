@@ -1,11 +1,11 @@
 # Orange3-Biblium package
 """Orange3-Biblium — bibliometric analysis widgets for Orange3.
 
-Powered by Biblium 2.16+. Widgets degrade gracefully when biblium
+Powered by Biblium 2.19+. Widgets degrade gracefully when biblium
 isn't installed (a fallback implementation is used where possible).
 """
 
-__version__ = "0.2.0"
+__version__ = "0.4.0"
 
 from orangebib.base import (
     BaseBibliumWidget,

@@ -362,7 +362,7 @@ class OWReportGenerator(OWWidget):
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
         no_biblium = Msg("Biblium is required for report generation. "
-                         "Install biblium>=2.16.")
+                         "Install biblium>=2.19.1.")
         no_format = Msg("Select at least one output format")
         no_output_dir = Msg("Choose an output folder")
         generation_error = Msg("Report generation failed: {}")

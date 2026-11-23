@@ -16,6 +16,11 @@ Usage
 Exit status is 0 when every table matches the stored reference and 1
 otherwise, so the script can be used as a reproducibility check in CI.
 
+Tables are compared as sets of rows, because rows with equal sort values may
+come out in either order depending on the installed pandas/NumPy. All
+deterministic quantities must agree within 1e-6. Permutation p-values are
+Monte Carlo estimates and must agree within four standard errors.
+
 Parameters used in the manuscript
 ---------------------------------
 Figure 2  Group Associations: entity = Sources (Journals), three publication
@@ -48,6 +53,14 @@ FIG2_TOP_N, FIG2_MIN_FREQ = 10, 5
 FIG3_TOP_N, FIG3_MIN_FREQ = 20, 3
 
 TOLERANCE = 1e-6
+# Permutation p-values are Monte Carlo estimates (999 permutations). They are
+# seeded, but the realised permutations depend on the versions of NumPy and
+# of the data reader, so across environments they agree only within sampling
+# error. They are compared with a tolerance of four standard errors; the
+# multiplicity-corrected values derived from them are not compared.
+N_PERMUTATIONS = 999
+MONTE_CARLO = "Perm. p-value"
+MONTE_CARLO_DERIVED = ("Perm. p (BH)", "Perm. p (Bonferroni)")
 
 def _shim(cls, **attrs):
     """A plain object carrying the widget class's own methods.
@@ -208,6 +221,18 @@ def compare(name: str, got: pd.DataFrame, path: str) -> bool:
     ref = pd.read_csv(path)
     got = _normalise(_through_csv(got.reset_index(drop=True)))
     ref = _normalise(ref)
+    # Rows with equal sort values (two journals with the same total, two
+    # pairs with the same co-occurrence) can come out in either order,
+    # depending on the sorting routine of the installed pandas/NumPy. The
+    # tables are therefore compared as sets of rows: both are ordered by
+    # their label columns first.
+    keys = [c for c in ref.columns
+            if c in got.columns and not pd.api.types.is_numeric_dtype(ref[c])]
+    if keys and list(got.columns) == list(ref.columns) and len(got) == len(ref):
+        order = lambda d: d.assign(**{k: d[k].astype(str) for k in keys}) \
+            .sort_values(keys, kind="stable").index
+        got = got.loc[order(got)].reset_index(drop=True)
+        ref = ref.loc[order(ref)].reset_index(drop=True)
     if list(got.columns) != list(ref.columns):
         print(f"  FAIL {name}: columns differ\n"
               f"        expected {list(ref.columns)}\n"
@@ -218,9 +243,19 @@ def compare(name: str, got: pd.DataFrame, path: str) -> bool:
         return False
 
     mismatches = []
+    monte_carlo = False
     for col in ref.columns:
         a, b = got[col], ref[col]
-        if pd.api.types.is_numeric_dtype(b) and pd.api.types.is_numeric_dtype(a):
+        if col in MONTE_CARLO_DERIVED:
+            monte_carlo = True
+            continue
+        if col == MONTE_CARLO:
+            monte_carlo = True
+            pa, pb = a.astype(float), b.astype(float)
+            se = np.sqrt(pb * (1 - pb) / (N_PERMUTATIONS + 1))
+            close = ((pa - pb).abs() <= 4 * se + 2 / (N_PERMUTATIONS + 1)) \
+                | (pa.isna() & pb.isna())
+        elif pd.api.types.is_numeric_dtype(b) and pd.api.types.is_numeric_dtype(a):
             close = np.isclose(a.astype(float), b.astype(float),
                                rtol=0, atol=TOLERANCE, equal_nan=True)
         else:
@@ -231,7 +266,8 @@ def compare(name: str, got: pd.DataFrame, path: str) -> bool:
     if mismatches:
         print(f"  FAIL {name}: {', '.join(mismatches)}")
         return False
-    print(f"  OK   {name} ({len(got)} rows x {len(ref.columns)} columns)")
+    note = "; permutation p-values within sampling error" if monte_carlo else ""
+    print(f"  OK   {name} ({len(got)} rows x {len(ref.columns)} columns{note})")
     return True
 
 

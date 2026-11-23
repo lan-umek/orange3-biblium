@@ -213,7 +213,7 @@ class OWSDGNetworks(OWWidget):
 
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
-        no_biblium = Msg("Biblium addons are required (biblium>=2.16).")
+        no_biblium = Msg("Biblium addons are required (biblium>=2.19.1).")
         no_sdg = Msg("No SDG columns found (need 'SDG N' columns or an SDG list column)")
         compute_error = Msg("Computation error: {}")
 

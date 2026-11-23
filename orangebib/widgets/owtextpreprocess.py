@@ -138,7 +138,7 @@ class OWTextPreprocess(OWWidget):
 
     class Error(OWWidget.Error):
         no_data = Msg("No input data")
-        no_biblium = Msg("Biblium is required (biblium>=2.16).")
+        no_biblium = Msg("Biblium is required (biblium>=2.19.1).")
         compute_error = Msg("Processing error: {}")
 
     class Information(OWWidget.Information):

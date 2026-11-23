@@ -4,7 +4,7 @@ Main Information Widget
 =======================
 Orange widget for computing main bibliometric information and statistics.
 
-Uses biblium 2.16+ for:
+Uses biblium 2.19+ for:
 - Performance indicators (H-index, G-index, A/R/W/T/Pi/HG indices, Gini, ...)
 - Time series analysis (growth rates, trends)
 - Descriptive statistics for various entity types
